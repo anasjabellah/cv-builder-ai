@@ -51,7 +51,6 @@ export default function CVPreview({ html, generating }: CVPreviewProps) {
         ref={iframeRef}
         title="CV Preview"
         className="w-full aspect-[210/297]"
-        sandbox="allow-scripts allow-same-origin"
       />
     </div>
   );
