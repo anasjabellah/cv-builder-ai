@@ -1,4 +1,4 @@
-const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent';
 
 export interface OpenRouterMessage {
   role: 'system' | 'user' | 'assistant';
@@ -14,6 +14,7 @@ export async function callOpenRouter(
     throw new Error('GOOGLE_API_KEY is not set');
   }
   const prompt = messages.map(m => `${m.role}: ${m.content}`).join('\n\n');
+  console.log('HITTING GEMINI URL:', GEMINI_URL);
   const response = await fetch(`${GEMINI_URL}?key=${apiKey}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
