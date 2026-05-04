@@ -123,9 +123,9 @@ cv-builder-ai/
 ├── src/
 │   ├── app/              # Next.js app router pages & API routes
 │   ├── components/       # React UI components
-│   ├── lib/             # AI, parsing & export logic
-│   └── types/           # TypeScript type definitions
-├── public/              # Static assets
+│   ├── lib/              # AI, parsing & export logic
+│   └── types/            # TypeScript type definitions
+├── public/               # Static assets
 └── package.json
 ```
 
