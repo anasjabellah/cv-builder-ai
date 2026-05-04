@@ -29,43 +29,14 @@ export async function extractCV(
 
   const formData = emptyFormData();
 
-  const prompt = `Extract ALL CV data from this text and return ONLY a valid JSON object matching this TypeScript interface:
+  const prompt = `Extract CV data from text and return ONLY a valid JSON object matching this interface:
 
-interface CVFormData {
-  personalInfo: {
-    fullName: string;
-    email: string;
-    phone: string;
-    address: string;
-    linkedin: string;
-    github: string;
-    website: string;
-    photo?: string;
-  };
-  summary: string;
-  experience: { id: string; company: string; position: string; startDate: string; endDate: string; current: boolean; description: string }[];
-  education: { id: string; institution: string; degree: string; field: string; startDate: string; endDate: string; grade: string }[];
-  skills: { id: string; category: string; items: string[] }[];
-  languages: { id: string; name: string; level: 'Beginner' | 'Intermediate' | 'Advanced' | 'Native' }[];
-  certifications: { id: string; name: string; issuer: string; date: string }[];
-}
+CVFormData: { personalInfo: { fullName, email, phone, address, linkedin, github, website, photo? }, summary, experience: { id, company, position, startDate, endDate, current, description }[], education: { id, institution, degree, field, startDate, endDate, grade }[], skills: { id, category, items[] }[], languages: { id, name, level }[], certifications: { id, name, issuer, date }[] }
 
-CRITICAL EXTRACTION RULES:
-- Return ONLY the JSON object, no markdown, no explanation, no \`\`\`json\`\`\` wrappers.
-- Extract ALL education entries: include school/university name (institution), degree type (Bachelor, Master, PhD, etc.), field of study, dates, and grades if available.
-- Extract ALL work experience entries with complete descriptions.
-- Extract ALL skills and group them by category (Technical, Soft Skills, Tools, Languages, etc.).
-- Extract ALL certifications with issuer and date.
-- Generate unique string IDs for all id fields (can be "exp1", "edu1", "skill1", etc.).
-- Use "Intermediate" as default language level if unknown.
-- Set current=true for jobs without an end date, otherwise false.
-- Dates must be in YYYY-MM or MM/YYYY format.
-- If a field cannot be found, use empty string or empty array as appropriate.
-- Education and Certifications sections ARE REQUIRED - extract them if they exist in the text.
-- Ensure valid JSON syntax.
+Rules: ONLY JSON. No markdown. Generate IDs. Default lang level="Intermediate". current=true if no endDate. Dates: YYYY-MM. Empty string/array if not found. Extract education & certifications if present. Valid JSON.
 
-Text to parse:
-${text.substring(0, 8000)}`;
+Text:
+${text.substring(0, 3000)}`;
 
   const response = await callOpenRouter([
     {
