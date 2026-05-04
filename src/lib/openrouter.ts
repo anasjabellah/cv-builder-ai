@@ -1,48 +1,30 @@
-const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
+const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
 export interface OpenRouterMessage {
   role: 'system' | 'user' | 'assistant';
   content: string;
 }
 
-export interface OpenRouterResponse {
-  choices: {
-    message: {
-      content: string;
-    };
-  }[];
-}
-
 export async function callOpenRouter(
   messages: OpenRouterMessage[],
   max_tokens: number = 4000
 ): Promise<string> {
-  const apiKey = process.env.OPENROUTER_API_KEY;
-
+  const apiKey = process.env.GOOGLE_API_KEY;
   if (!apiKey) {
-    throw new Error('OPENROUTER_API_KEY is not set in environment variables');
+    throw new Error('GOOGLE_API_KEY is not set');
   }
-
-  const response = await fetch(OPENROUTER_API_URL, {
+  const prompt = messages.map(m => `${m.role}: ${m.content}`).join('\n\n');
+  const response = await fetch(`${GEMINI_URL}?key=${apiKey}`, {
     method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-      'HTTP-Referer': 'http://localhost:3000',
-      'X-Title': 'CV Builder AI',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: 'meta-llama/llama-3.3-70b-instruct:free',
-      messages,
-      max_tokens,
-    }),
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { maxOutputTokens: max_tokens }
+    })
   });
-
+  const data = await response.json();
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`OpenRouter API error (${response.status}): ${errorText}`);
+    throw new Error(`Gemini API error (${response.status}): ${JSON.stringify(data)}`);
   }
-
-  const data: OpenRouterResponse = await response.json();
-  return data.choices[0]?.message?.content || '';
+  return data.candidates[0].content.parts[0].text;
 }

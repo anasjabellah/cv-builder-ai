@@ -70,14 +70,26 @@ ${text.substring(0, 8000)}`;
   ]);
 
   let cleaned = response.trim();
+
+  // Remove thinking tags (Gemini 2.5 flash includes these)
+  cleaned = cleaned.replace(/<thinking>[\s\S]*?<\/thinking>/g, '').trim();
+
+  // Remove markdown code fences
   if (cleaned.startsWith('```')) {
     cleaned = cleaned.replace(/```[a-z]*\n?/g, '').replace(/```$/, '').trim();
+  }
+
+  // Extract JSON object if there's text before/after it
+  const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+  if (jsonMatch) {
+    cleaned = jsonMatch[0];
   }
 
   try {
     const parsed = JSON.parse(cleaned) as Partial<CVFormData>;
     return mergeWithDefaults(parsed, formData);
   } catch (e) {
+    console.error('Raw Gemini response:', response);
     console.error('Failed to parse CV JSON:', cleaned);
     throw new Error('Failed to parse the CV data. Please try filling the form manually.');
   }
