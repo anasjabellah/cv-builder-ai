@@ -88,13 +88,13 @@ Get your free key at: https://aistudio.google.com
 
 ```
 ┌─────────────┐   ┌─────────────┐   ┌─────────────┐   ┌─────────────┐
-│  Upload CV  │──>│  AI Extract │──>│ Edit Form  │──>│  AI Design  │
+│  Upload CV  │──>│  AI Extract │──>│ Edit Form   │──>│  AI Design  │
 └─────────────┘   └─────────────┘   └─────────────┘   └─────────────┘
                                                                 │
                                                                 v
-                                                         ┌─────────────┐
-                                                         │ Export PDF/Word│
-                                                         └─────────────┘
+                                                         ┌─────────────────┐
+                                                         │ Export PDF/Word │
+                                                         └─────────────────┘
 ```
 
 1. **Upload** your old CV (PDF or Word)
