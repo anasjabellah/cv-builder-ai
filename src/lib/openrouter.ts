@@ -21,7 +21,7 @@ export async function callOpenRouter(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'llama3-8b-8192',
+      model: 'llama-3.1-8b-instant',
       messages,
       max_tokens,
       temperature: 0.7,

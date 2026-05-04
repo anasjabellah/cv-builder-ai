@@ -22,7 +22,8 @@
       "Bash(taskkill //F //IM node.exe)",
       "Bash(curl -s -X POST \"https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash:generateContent?key=$\\(cat \"C:/Users/PC-DELL/OneDrive/Bureau/Claude Code/cv-builder-ai/.env\")",
       "Bash(curl -s \"https://generativelanguage.googleapis.com/v1beta/models?key=$\\(cat \"C:/Users/PC-DELL/OneDrive/Bureau/Claude Code/cv-builder-ai/.env\")",
-      "Bash(curl -s -w \"\\\\nHTTP_STATUS: %{http_code}\\\\n\" -X POST \"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=$\\(cat \"C:/Users/PC-DELL/OneDrive/Bureau/Claude Code/cv-builder-ai/.env\")"
+      "Bash(curl -s -w \"\\\\nHTTP_STATUS: %{http_code}\\\\n\" -X POST \"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=$\\(cat \"C:/Users/PC-DELL/OneDrive/Bureau/Claude Code/cv-builder-ai/.env\")",
+      "Bash(npx tsc *)"
     ]
   }
 }
