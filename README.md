@@ -8,7 +8,8 @@ CV Builder AI is a modern web application that transforms your outdated CV into 
 
 ## 📸 Screenshot
 
-![CV Builder AI Screenshot](https://via.placeholder.com/1200x600/7C3AED/FFFFFF?text=CV+Builder+AI+-+Beautiful+CVs+in+Seconds)
+<img width="1903" height="954" alt="image" src="https://github.com/user-attachments/assets/8f7675e3-8e2f-4219-aa2a-c523fb4ccb8e" />
+
 
 ---
 
