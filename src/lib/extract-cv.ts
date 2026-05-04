@@ -29,7 +29,7 @@ export async function extractCV(
 
   const formData = emptyFormData();
 
-  const prompt = `Extract CV data from this text and return ONLY a valid JSON object matching this TypeScript interface:
+  const prompt = `Extract ALL CV data from this text and return ONLY a valid JSON object matching this TypeScript interface:
 
 interface CVFormData {
   personalInfo: {
@@ -50,12 +50,18 @@ interface CVFormData {
   certifications: { id: string; name: string; issuer: string; date: string }[];
 }
 
-Rules:
+CRITICAL EXTRACTION RULES:
 - Return ONLY the JSON object, no markdown, no explanation, no \`\`\`json\`\`\` wrappers.
-- Generate proper UUIDs for all id fields using crypto.randomUUID() pattern (just use simple unique strings).
+- Extract ALL education entries: include school/university name (institution), degree type (Bachelor, Master, PhD, etc.), field of study, dates, and grades if available.
+- Extract ALL work experience entries with complete descriptions.
+- Extract ALL skills and group them by category (Technical, Soft Skills, Tools, Languages, etc.).
+- Extract ALL certifications with issuer and date.
+- Generate unique string IDs for all id fields (can be "exp1", "edu1", "skill1", etc.).
 - Use "Intermediate" as default language level if unknown.
-- Set current=true for jobs without an end date.
+- Set current=true for jobs without an end date, otherwise false.
+- Dates must be in YYYY-MM or MM/YYYY format.
 - If a field cannot be found, use empty string or empty array as appropriate.
+- Education and Certifications sections ARE REQUIRED - extract them if they exist in the text.
 - Ensure valid JSON syntax.
 
 Text to parse:
