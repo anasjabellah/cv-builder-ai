@@ -8,6 +8,7 @@ import CVForm from '@/components/form/CVForm';
 import CVPreview from '@/components/preview/CVPreview';
 import StylePicker from '@/components/preview/StylePicker';
 import ExportButtons from '@/components/export/ExportButtons';
+import CloneDesignButton from '@/components/editor/CloneDesignButton';
 import Button from '@/components/ui/Button';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
@@ -199,6 +200,7 @@ export default function HomePage() {
               onGenerate={handleGenerate}
               generating={generating}
             />
+            <CloneDesignButton formData={formData} onGenerated={setGeneratedHtml} />
           </div>
 
           {/* RIGHT: Preview */}
