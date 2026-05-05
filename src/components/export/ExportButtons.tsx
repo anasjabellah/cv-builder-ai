@@ -20,10 +20,9 @@ export default function ExportButtons({ html, formData, style }: ExportButtonsPr
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          html: format === 'pdf' ? html : undefined,
+          html,
           format,
           filename: `${formData.personalInfo.fullName || 'cv'}-${style}`,
-          formData: format === 'word' ? formData : undefined,
         }),
       });
 
