@@ -1,16 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generatePDFFromHTML } from '@/lib/export-pdf';
-import { generateWordBuffer } from '@/lib/export-word';
-import type { CVFormData } from '@/types';
+import { generateWordFromHTML } from '@/lib/export-word';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { html, format, filename, formData } = body as {
+    const { html, format, filename } = body as {
       html?: string;
       format: 'pdf' | 'word';
       filename: string;
-      formData?: CVFormData;
     };
 
     if (format === 'pdf') {
@@ -27,10 +25,10 @@ export async function POST(request: NextRequest) {
     }
 
     if (format === 'word') {
-      if (!formData) {
-        return NextResponse.json({ error: 'Missing formData' }, { status: 400 });
+      if (!html) {
+        return NextResponse.json({ error: 'Missing HTML content' }, { status: 400 });
       }
-      const wordBuffer = await generateWordBuffer(formData);
+      const wordBuffer = await generateWordFromHTML(html);
       return new NextResponse(wordBuffer as unknown as BodyInit, {
         headers: {
           'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
