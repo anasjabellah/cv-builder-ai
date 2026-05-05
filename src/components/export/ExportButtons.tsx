@@ -23,6 +23,7 @@ export default function ExportButtons({ html, formData, style }: ExportButtonsPr
           html,
           format,
           filename: `${formData.personalInfo.fullName || 'cv'}-${style}`,
+          formData,
         }),
       });
 

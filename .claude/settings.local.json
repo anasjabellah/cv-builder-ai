@@ -25,7 +25,13 @@
       "Bash(curl -s -w \"\\\\nHTTP_STATUS: %{http_code}\\\\n\" -X POST \"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=$\\(cat \"C:/Users/PC-DELL/OneDrive/Bureau/Claude Code/cv-builder-ai/.env\")",
       "Bash(npx tsc *)",
       "Bash(cat node_modules/html-to-docx/dist/html-to-docx.d.ts)",
-      "Bash(cat node_modules/html-to-docx/index.d.ts)"
+      "Bash(cat node_modules/html-to-docx/index.d.ts)",
+      "Bash(findstr /i \"error word export docx\" \"C:\\\\Users\\\\PC-DELL\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-PC-DELL-OneDrive-Bureau-Claude-Code-cv-builder-ai\\\\7f30eb78-4419-42e7-aeb9-ea34225c728f\\\\tasks\\\\bx2ofa5ui.output\")",
+      "Bash(findstr /i \"error\\\\|word\\\\|export\\\\|docx\")",
+      "Bash(findstr /i \"error\")",
+      "Bash(findstr /i \"word export docx\")",
+      "Bash(findstr /i \"error word export docx\")",
+      "Bash(findstr /i \"error\" /i \"word\" /i \"export\" /i \"docx\")"
     ]
   }
 }

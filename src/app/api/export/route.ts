@@ -5,10 +5,11 @@ import { generateWordFromHTML } from '@/lib/export-word';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { html, format, filename } = body as {
+    const { html, format, filename, formData } = body as {
       html?: string;
       format: 'pdf' | 'word';
       filename: string;
+      formData?: import('@/types').CVFormData;
     };
 
     if (format === 'pdf') {
@@ -28,19 +29,18 @@ export async function POST(request: NextRequest) {
       if (!html) {
         return NextResponse.json({ error: 'Missing HTML content' }, { status: 400 });
       }
-      const wordBuffer = await generateWordFromHTML(html);
+      const wordBuffer = await generateWordFromHTML(html, formData);
       return new NextResponse(wordBuffer as unknown as BodyInit, {
         headers: {
           'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-          'Content-Disposition': `attachment; filename="${filename || 'cv'}.docx"`,
+          'Content-Disposition': 'attachment; filename="cv.docx"',
         },
       });
     }
 
     return NextResponse.json({ error: 'Invalid format' }, { status: 400 });
-  } catch (error: unknown) {
-    console.error('Export error:', error);
-    const message = error instanceof Error ? error.message : 'Failed to export';
-    return NextResponse.json({ error: message }, { status: 500 });
+  } catch (error) {
+    console.error('Word export error:', error);
+    return NextResponse.json({ error: String(error) }, { status: 500 });
   }
 }
