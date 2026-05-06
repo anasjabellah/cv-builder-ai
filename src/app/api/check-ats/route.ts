@@ -43,12 +43,26 @@ Scoring criteria:
 
 Be strict but fair. A typical good CV should score 70-85. Return ONLY valid JSON, no markdown formatting, no code fences.`;
 
-    const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    const groqUrl = 'https://api.groq.com/openai/v1/chat/completions';
+    const groqHeaders = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
+    };
+
+    // Log the full request details
+    console.log('[ATS] ===== GROQ API REQUEST =====');
+    console.log('[ATS] URL:', groqUrl);
+    console.log('[ATS] Headers:', { ...groqHeaders, 'Authorization': 'Bearer [REDACTED]' });
+    console.log('[ATS] Body:', JSON.stringify({
+      model: 'llama3-8b-8192',
+      messages: [{ role: 'user', content: prompt.substring(0, 200) + '...' }],
+      temperature: 0.3,
+      max_tokens: 1024,
+    }));
+
+    const groqRes = await fetch(groqUrl, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
-      },
+      headers: groqHeaders,
       body: JSON.stringify({
         model: 'llama3-8b-8192',
         messages: [{ role: 'user', content: prompt }],
@@ -57,23 +71,44 @@ Be strict but fair. A typical good CV should score 70-85. Return ONLY valid JSON
       }),
     });
 
-    const groqData = await groqRes.json();
+    // Log the raw response before parsing
+    const groqText = await groqRes.text();
+    console.log('[ATS] ===== GROQ API RESPONSE =====');
+    console.log('[ATS] Response status:', groqRes.status, groqRes.statusText);
+    console.log('[ATS] Response headers:', Object.fromEntries(groqRes.headers.entries()));
+    console.log('[ATS] Raw response text (first 2000 chars):', groqText.substring(0, 2000));
+    console.log('[ATS] Raw response length:', groqText.length);
+
+    // Now parse the JSON from the text
+    let groqData;
+    try {
+      groqData = JSON.parse(groqText);
+    } catch (parseError) {
+      console.error('[ATS] Failed to parse Groq response as JSON:', parseError);
+      console.error('[ATS] Raw response was:', groqText);
+      return NextResponse.json(
+        { error: 'Invalid response from ATS analyzer', rawResponse: groqText.substring(0, 500) },
+        { status: 500 }
+      );
+    }
 
     if (!groqRes.ok) {
-      console.error('Groq ATS check error:', groqData);
+      console.error('[ATS] Groq ATS check error:', groqData);
       throw new Error(groqData.error?.message || 'ATS check failed');
     }
 
     const content = groqData.choices?.[0]?.message?.content || '';
+    console.log('[ATS] Content from Groq (first 500 chars):', content.substring(0, 500));
 
     // Try to extract JSON from the response (may be wrapped in markdown)
     let result;
     try {
-      const jsonMatch = content.match(/\{[\s\S]*\}/);
+      const jsonMatch = content.match(/\{\s\S]*\}/);
       const jsonString = jsonMatch ? jsonMatch[0] : content;
       result = JSON.parse(jsonString);
+      console.log('[ATS] Successfully parsed result:', { score: result.score, strengthsCount: result.strengths?.length, weaknessesCount: result.weaknesses?.length, suggestionsCount: result.suggestions?.length });
     } catch (parseError) {
-      console.error('Failed to parse Groq ATS response. Raw content:', content);
+      console.error('[ATS] Failed to parse ATS response. Raw content:', content);
       return NextResponse.json(
         { error: 'Invalid response from ATS analyzer', rawResponse: content.substring(0, 500) },
         { status: 500 }
@@ -82,7 +117,7 @@ Be strict but fair. A typical good CV should score 70-85. Return ONLY valid JSON
 
     return NextResponse.json(result);
   } catch (error: unknown) {
-    console.error('ATS check error:', error);
+    console.error('[ATS] ATS check error:', error);
     const message = error instanceof Error ? error.message : 'Failed to check ATS score';
     return NextResponse.json({ error: message }, { status: 500 });
   }
