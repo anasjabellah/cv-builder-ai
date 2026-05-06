@@ -41,7 +41,7 @@ Scoring criteria:
 5. Uses strong action verbs and keywords: up to 10 points
 6. No special characters or formatting issues: up to 10 points
 
-Be strict but fair. A typical good CV should score 70-85. Only output valid JSON, no markdown formatting.`;
+Be strict but fair. A typical good CV should score 70-85. Return ONLY valid JSON, no markdown formatting, no code fences.`;
 
     const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
@@ -65,14 +65,19 @@ Be strict but fair. A typical good CV should score 70-85. Only output valid JSON
     }
 
     const content = groqData.choices?.[0]?.message?.content || '';
+
+    // Try to extract JSON from the response (may be wrapped in markdown)
     let result;
     try {
-      // Extract JSON from response (may be wrapped in markdown)
       const jsonMatch = content.match(/\{[\s\S]*\}/);
-      result = JSON.parse(jsonMatch ? jsonMatch[0] : content);
-    } catch {
-      console.error('Failed to parse Groq ATS response:', content);
-      throw new Error('Invalid response from ATS analyzer');
+      const jsonString = jsonMatch ? jsonMatch[0] : content;
+      result = JSON.parse(jsonString);
+    } catch (parseError) {
+      console.error('Failed to parse Groq ATS response. Raw content:', content);
+      return NextResponse.json(
+        { error: 'Invalid response from ATS analyzer', rawResponse: content.substring(0, 500) },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json(result);
