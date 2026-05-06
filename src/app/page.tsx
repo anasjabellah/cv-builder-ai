@@ -8,8 +8,9 @@ import CVForm from '@/components/form/CVForm';
 import CVPreview from '@/components/preview/CVPreview';
 import StylePicker from '@/components/preview/StylePicker';
 import ExportButtons from '@/components/export/ExportButtons';
+import ATSResult from '@/components/ui/ATSResult';
 import Button from '@/components/ui/Button';
-import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import LoadingSpinner from '@/components/ui/LoadingSpinner'// unused but kept for future use
 import { auth, googleProvider, firestore } from '@/lib/firebase';
 import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
@@ -23,8 +24,10 @@ export default function HomePage() {
   const [generating, setGenerating] = useState(false);
   const [generatedHtml, setGeneratedHtml] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // unused but kept for future use
   const [user, setUser] = useState<any>(null);
+  const [atsResult, setAtsResult] = useState<any>(null);
+  const [checkingATS, setCheckingATS] = useState(false);
 
   // Listen for auth state changes and load saved CV data
   useEffect(() => {
@@ -94,6 +97,27 @@ export default function HomePage() {
   useEffect(() => {
     console.log('[Page] generatedHtml:', generatedHtml ? `${generatedHtml.length} chars` : 'null');
   }, [generatedHtml]);
+
+
+  const handleCheckATS = useCallback(async () => {
+    setCheckingATS(true);
+    setAtsResult(null);
+    setError(null);
+    try {
+      const res = await fetch('/api/check-ats', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ formData }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'ATS check failed');
+      setAtsResult(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'ATS check failed');
+    } finally {
+      setCheckingATS(false);
+    }
+  }, [formData]);
 
   const handleRegenerate = useCallback(() => {
     handleGenerate();
@@ -233,6 +257,8 @@ export default function HomePage() {
       </div>
 
       {/* Main Content */}
+
+        <ATSResult result={atsResult} onClose={() => setAtsResult(null)} />
       <main className="flex-1 max-w-[1600px] mx-auto w-full px-6 py-6">
         {error && (
           <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm">
@@ -274,6 +300,16 @@ export default function HomePage() {
                   type="button"
                 >
                   ðŸ”„ Regenerate with Different Design
+                </Button>
+
+                <Button
+                  variant="secondary"
+                  onClick={handleCheckATS}
+                  className="w-full cursor-pointer"
+                  type="button"
+                  disabled={checkingATS}
+                >
+                  {checkingATS ? 'Checking ATS...' : 'Check ATS Score'}
                 </Button>
                 <ExportButtons
                   html={generatedHtml}
