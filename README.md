@@ -10,17 +10,18 @@ CV Builder AI is a modern web application that transforms your outdated CV into 
 
 <img width="1903" height="954" alt="image" src="https://github.com/user-attachments/assets/8f7675e3-8e2f-4219-aa2a-c523fb4ccb8e" />
 
-
 ---
 
 ## ✨ Features
 
 - 📤 **Upload Old CV** — Drag & drop your PDF or Word (.doc/.docx) resume
-- 🤖 **AI-Powered Extraction** — Google Gemini AI automatically parses your CV data
-- ✏️ **Edit Everything** — Clean form to review and refine every detail
-- 🎨 **3 Stunning Styles** — Modern, Classic, or Creative designs
-- ⚡ **AI Generation** — Get a beautifully designed HTML CV in seconds
+- 🤖 **AI-Powered Extraction** — Groq AI automatically parses your CV data
+- ✏️ **Edit Everything** — Clean form to review and refine every detail (Personal Info, Experience, Education, Skills, Languages, Certifications)
+- 🎨 **3 Stunning Styles** — Modern, Classic, or Creative designs with live preview thumbnails
+- ⚡ **AI Generation** — Get a beautifully designed HTML CV in seconds (OpenAI GPT‑4o)
 - 📄 **Export** — Download as PDF or Word document
+- 🔐 **Google Login** — Firebase Auth with automatic data save/load
+- 💾 **Firestore Sync** — Auto-save and auto-load CV data per user
 - 🌙 **Premium Dark UI** — Sleek, modern interface built for professionals
 
 ---
@@ -30,11 +31,12 @@ CV Builder AI is a modern web application that transforms your outdated CV into 
 | Technology | Description |
 |-------------|-------------|
 | **Next.js 15** | App Router, TypeScript, Server Actions |
+| **React 19** | Client-side state, hooks, modern UI |
 | **Tailwind CSS v4** | Utility-first styling, dark theme |
-| **Google Gemini AI** | Free AI model for CV parsing & generation |
-| **pdf-parse** | Extract text from PDF files |
-| **mammoth** | Extract text from Word documents |
-| **puppeteer** | Generate print-ready PDF exports |
+| **Groq API** | Free, fast AI model for CV parsing |
+| **OpenAI GPT‑4o** | Vision-powered design generation |
+| **Firebase** | Auth (Google login), Firestore (per-user data) |
+| **Puppeteer** | Generate print-ready PDF exports |
 | **docx** | Generate editable Word exports |
 
 ---
@@ -43,7 +45,9 @@ CV Builder AI is a modern web application that transforms your outdated CV into 
 
 ### Prerequisites
 - Node.js 18+ installed
-- Google Gemini API key (free)
+- Groq API key (free)
+- Firebase project set up (for Auth & Firestore)
+- OpenAI API key (for design generation)
 
 ### 1. Clone the repository
 ```bash
@@ -57,13 +61,28 @@ npm install
 ```
 
 ### 3. Create `.env` file
-Create a `.env` file in the project root:
+Create a `.env` file in the project root with the following variables:
+
 ```bash
-GEMINI_API_KEY=your_gemini_api_key_here
+# Groq AI (required for CV parsing)
+GROQ_API_KEY=your_groq_api_key_here
+
+# OpenAI (required for CV design generation)
+OPENAI_API_KEY=your_openai_api_key_here
+
+# Firebase (required for login & data sync)
+NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.firebasestorage.app
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
 ```
 
-### 4. Get a free API key
-Visit [Google AI Studio](https://aistudio.google.com) to get your free Gemini API key.
+### 4. Get API keys
+- **Groq**: Visit [Groq Console](https://console.groq.com) for a free API key.
+- **OpenAI**: Visit [OpenAI Platform](https://platform.openai.com) for a GPT‑4o API key.
+- **Firebase**: Create a project at [Firebase Console](https://console.firebase.google.com), enable Google Auth, and copy the web app credentials.
 
 ### 5. Start the development server
 ```bash
@@ -78,9 +97,14 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 | Variable | Description | Required |
 |----------|-------------|----------|
-| `GEMINI_API_KEY` | Google Gemini API key for AI features | ✅ Yes |
-
-Get your free key at: https://aistudio.google.com
+| `GROQ_API_KEY` | Groq API key for AI CV parsing | ✅ Yes |
+| `OPENAI_API_KEY` | OpenAI GPT‑4o for design generation | ✅ Yes |
+| `NEXT_PUBLIC_FIREBASE_API_KEY` | Firebase API key | ✅ Yes (for Auth) |
+| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | Firebase auth domain | ✅ Yes (for Auth) |
+| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | Firebase project ID | ✅ Yes (for Auth) |
+| `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` | Firebase storage bucket | ✅ Yes (for Auth) |
+| `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | Firebase messaging sender ID | ✅ Yes (for Auth) |
+| `NEXT_PUBLIC_FIREBASE_APP_ID` | Firebase app ID | ✅ Yes (for Auth) |
 
 ---
 
@@ -88,7 +112,7 @@ Get your free key at: https://aistudio.google.com
 
 ```
 ┌─────────────┐   ┌─────────────┐   ┌─────────────┐   ┌─────────────┐
-│  Upload CV  │──>│  AI Extract │──>│ Edit Form   │──>│  AI Design  │
+│  Upload CV  │──>│  AI Extract │──>│  Edit Form   │──>│  AI Design  │
 └─────────────┘   └─────────────┘   └─────────────┘   └─────────────┘
                                                                 │
                                                                 v
@@ -98,11 +122,12 @@ Get your free key at: https://aistudio.google.com
 ```
 
 1. **Upload** your old CV (PDF or Word)
-2. **AI extracts** all your data automatically
+2. **AI extracts** all your data automatically (Groq)
 3. **Edit** any details in the clean form interface
-4. **Pick a style**: Modern, Classic, or Creative
-5. **Generate** — AI creates a stunning CV design
+4. **Pick a style**: Modern, Classic, or Creative (with live thumbnail previews)
+5. **Generate** — AI creates a stunning CV design (OpenAI GPT‑4o)
 6. **Export** as PDF or Word
+7. **Login** with Google to auto-save and sync your CV data across devices
 
 ---
 
@@ -122,7 +147,7 @@ Get your free key at: https://aistudio.google.com
 cv-builder-ai/
 ├── src/
 │   ├── app/              # Next.js app router pages & API routes
-│   ├── components/       # React UI components
+│   ├── components/       # React UI components (form, preview, export)
 │   ├── lib/              # AI, parsing & export logic
 │   └── types/            # TypeScript type definitions
 ├── public/               # Static assets
@@ -138,10 +163,12 @@ MIT License — feel free to use this project for personal or commercial purpose
 ---
 
 <p align="center">
-  Built with ❤️ using Next.js + Google Gemini AI
+  Built with ❤️ using Next.js + Groq AI + OpenAI + Firebase
 </p>
 
 <p align="center">
   <a href="https://github.com/anasjabellah/cv-builder-ai">GitHub</a> •
-  <a href="https://aistudio.google.com">Get API Key</a>
+  <a href="https://console.groq.com">Get Groq Key</a> •
+  <a href="https://platform.openai.com">Get OpenAI Key</a> •
+  <a href="https://console.firebase.google.com">Firebase Console</a>
 </p>
