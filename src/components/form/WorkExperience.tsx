@@ -7,11 +7,12 @@ import Textarea from '@/components/ui/Textarea';
 import Button from '@/components/ui/Button';
 
 interface WorkExperienceProps {
+  errors?: { company?: string; position?: string }[];
   data: ExperienceEntry[];
   onChange: (data: ExperienceEntry[]) => void;
 }
 
-export default function WorkExperience({ data, onChange }: WorkExperienceProps) {
+export default function WorkExperience({ data, onChange, errors }: WorkExperienceProps) {
   const update = (index: number, field: keyof ExperienceEntry, value: unknown) => {
     const updated = [...data];
     (updated[index] as any)[field] = value;
@@ -84,6 +85,7 @@ export default function WorkExperience({ data, onChange }: WorkExperienceProps) 
               value={exp.company}
               onChange={(e) => update(i, 'company', e.target.value)}
               placeholder="Acme Inc."
+              error={errors?.[i]?.company}
             />
             <Input
               label="Position"

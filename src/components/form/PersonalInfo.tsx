@@ -6,9 +6,14 @@ import Input from '@/components/ui/Input';
 interface PersonalInfoProps {
   data: PersonalInfo;
   onChange: (data: PersonalInfo) => void;
+  errors?: {
+    fullName?: string;
+    email?: string;
+    phone?: string;
+  };
 }
 
-export default function PersonalInfo({ data, onChange }: PersonalInfoProps) {
+export default function PersonalInfo({ data, onChange, errors }: PersonalInfoProps) {
   const update = (field: keyof PersonalInfo, value: string) => {
     onChange({ ...data, [field]: value });
   };
@@ -21,6 +26,7 @@ export default function PersonalInfo({ data, onChange }: PersonalInfoProps) {
           value={data.fullName}
           onChange={(e) => update('fullName', e.target.value)}
           placeholder="John Doe"
+          error={errors?.fullName}
         />
         <Input
           label="Email"
@@ -28,12 +34,14 @@ export default function PersonalInfo({ data, onChange }: PersonalInfoProps) {
           value={data.email}
           onChange={(e) => update('email', e.target.value)}
           placeholder="john@example.com"
+          error={errors?.email}
         />
         <Input
           label="Phone"
           value={data.phone}
           onChange={(e) => update('phone', e.target.value)}
           placeholder="+1 234 567 890"
+          error={errors?.phone}
         />
         <Input
           label="Address"

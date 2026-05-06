@@ -1,6 +1,6 @@
-'use client';
+﻿'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import type { CVFormData, CVStyle } from '@/types';
 import { emptyFormData } from '@/types';
 import CVUpload from '@/components/upload/CVUpload';
@@ -8,9 +8,11 @@ import CVForm from '@/components/form/CVForm';
 import CVPreview from '@/components/preview/CVPreview';
 import StylePicker from '@/components/preview/StylePicker';
 import ExportButtons from '@/components/export/ExportButtons';
-import CloneDesignButton from '@/components/editor/CloneDesignButton';
 import Button from '@/components/ui/Button';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import { auth, googleProvider, firestore } from '@/lib/firebase';
+import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 type Step = 'upload' | 'form';
 
@@ -22,6 +24,27 @@ export default function HomePage() {
   const [generatedHtml, setGeneratedHtml] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+  // Listen for auth state changes and load saved CV data
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      setUser(firebaseUser);
+      if (firebaseUser) {
+        const docRef = doc(firestore, 'cvs', firebaseUser.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data() as { formData: CVFormData; style: CVStyle; generatedHtml?: string };
+          setFormData(data.formData);
+          setStyle(data.style);
+          if (data.generatedHtml) {
+            setGeneratedHtml(data.generatedHtml);
+          }
+        }
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   const handleParsed = useCallback((data: CVFormData) => {
     setFormData(data);
@@ -56,12 +79,21 @@ export default function HomePage() {
       }
 
       setGeneratedHtml(data.html);
+      // Save to Firestore if user is logged in
+      if (user) {
+        await setDoc(doc(firestore, 'cvs', user.uid), { formData, style, generatedHtml: data.html, updatedAt: new Date() });
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to generate CV');
     } finally {
       setGenerating(false);
     }
   }, [formData, style]);
+
+  // Debug: log generatedHtml changes
+  useEffect(() => {
+    console.log('[Page] generatedHtml:', generatedHtml ? `${generatedHtml.length} chars` : 'null');
+  }, [generatedHtml]);
 
   const handleRegenerate = useCallback(() => {
     handleGenerate();
@@ -139,11 +171,30 @@ export default function HomePage() {
               CV Builder <span className="text-[#7C3AED]">AI</span>
             </span>
           </div>
-          <div className="flex items-center gap-3">
+           <div className="flex items-center gap-3">
+            {user ? (
+              <Button
+                variant="secondary"
+                onClick={async () => { await signOut(auth); setUser(null); }}
+                className="cursor-pointer text-sm"
+                type="button"
+              >
+                Logout
+              </Button>
+            ) : (
+              <Button
+                variant="secondary"
+                onClick={async () => { try { await signInWithPopup(auth, googleProvider); } catch (e: any) { if (e?.code !== 'auth/popup-closed-by-user') { setError(e?.message || 'Authentication failed'); } } }}
+                className="cursor-pointer text-sm"
+                type="button"
+              >
+                Login with Google
+              </Button>
+            )}
             <Button
               variant="ghost"
               onClick={() => {
-                setStep('upload');
+                setStep("upload");
                 setGeneratedHtml(null);
               }}
               className="cursor-pointer text-sm"
@@ -200,7 +251,6 @@ export default function HomePage() {
               onGenerate={handleGenerate}
               generating={generating}
             />
-            <CloneDesignButton formData={formData} onGenerated={setGeneratedHtml} />
           </div>
 
           {/* RIGHT: Preview */}
@@ -213,7 +263,7 @@ export default function HomePage() {
 
             <StylePicker selected={style} onSelect={setStyle} />
 
-            <CVPreview html={generatedHtml} generating={generating} />
+            <CVPreview key={user?.uid || 'guest'} html={generatedHtml} generating={generating} />
 
             {generatedHtml && (
               <div className="space-y-3">
@@ -223,7 +273,7 @@ export default function HomePage() {
                   className="w-full cursor-pointer"
                   type="button"
                 >
-                  🔄 Regenerate with Different Design
+                  ðŸ”„ Regenerate with Different Design
                 </Button>
                 <ExportButtons
                   html={generatedHtml}
@@ -238,3 +288,5 @@ export default function HomePage() {
     </div>
   );
 }
+
+

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useEffect } from 'react';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 interface CVPreviewProps {
@@ -9,18 +9,10 @@ interface CVPreviewProps {
 }
 
 export default function CVPreview({ html, generating }: CVPreviewProps) {
-  const iframeRef = useRef<HTMLIFrameElement>(null);
 
+  // Debug: log when html changes
   useEffect(() => {
-    if (html && iframeRef.current) {
-      const iframe = iframeRef.current;
-      const doc = iframe.contentDocument || iframe.contentWindow?.document;
-      if (doc) {
-        doc.open();
-        doc.write(html);
-        doc.close();
-      }
-    }
+    console.log('[CVPreview] html changed:', html ? `(${html.length} chars)` : 'null');
   }, [html]);
 
   if (generating) {
@@ -48,9 +40,9 @@ export default function CVPreview({ html, generating }: CVPreviewProps) {
   return (
     <div className="w-full rounded-xl border border-[#27272A] overflow-hidden bg-white">
       <iframe
-        ref={iframeRef}
         title="CV Preview"
         className="w-full aspect-[210/297]"
+        srcDoc={html}
       />
     </div>
   );

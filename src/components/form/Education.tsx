@@ -6,11 +6,12 @@ import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 
 interface EducationProps {
+  errors?: { institution?: string; degree?: string }[];
   data: EducationEntry[];
   onChange: (data: EducationEntry[]) => void;
 }
 
-export default function Education({ data, onChange }: EducationProps) {
+export default function Education({ data, onChange, errors }: EducationProps) {
   const update = (index: number, field: keyof EducationEntry, value: unknown) => {
     const updated = [...data];
     (updated[index] as any)[field] = value;
@@ -83,12 +84,14 @@ export default function Education({ data, onChange }: EducationProps) {
               value={edu.institution}
               onChange={(e) => update(i, 'institution', e.target.value)}
               placeholder="University of XYZ"
+              error={errors?.[i]?.institution}
             />
             <Input
               label="Degree"
               value={edu.degree}
               onChange={(e) => update(i, 'degree', e.target.value)}
               placeholder="Bachelor's"
+              error={errors?.[i]?.degree}
             />
             <Input
               label="Field of Study"

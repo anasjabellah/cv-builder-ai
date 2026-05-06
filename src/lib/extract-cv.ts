@@ -1,6 +1,6 @@
 import pdf from 'pdf-parse';
 import mammoth from 'mammoth';
-import { callOpenRouter } from './openrouter';
+import { callOpenRouter } from './groq';
 import type { CVFormData } from '@/types';
 import { emptyFormData } from '@/types';
 
@@ -29,14 +29,66 @@ export async function extractCV(
 
   const formData = emptyFormData();
 
-  const prompt = `Extract CV data from text and return ONLY a valid JSON object matching this interface:
+  const prompt = `You are an expert CV/resume parser. Extract the following information from the text and return ONLY a valid JSON object. Do not include any explanations, markdown, or additional text.
 
-CVFormData: { personalInfo: { fullName, email, phone, address, linkedin, github, website, photo? }, summary, experience: { id, company, position, startDate, endDate, current, description }[], education: { id, institution, degree, field, startDate, endDate, grade }[], skills: { id, category, items[] }[], languages: { id, name, level }[], certifications: { id, name, issuer, date }[] }
+Extract these fields exactly:
 
-Rules: ONLY JSON. No markdown. Generate IDs. Default lang level="Intermediate". current=true if no endDate. Dates: YYYY-MM. Empty string/array if not found. Extract education & certifications if present. Valid JSON.
+1. personalInfo:
+   - fullName: The person's full name as it appears at the top of the CV
+   - email: Email address (look for @ symbol)
+   - phone: Phone number (may include country code, spaces, dashes)
+   - address: Physical address or location (city, country)
+   - linkedin: LinkedIn profile URL or username
+   - github: GitHub profile URL or username
+   - website: Personal website or portfolio URL
+   - photo: Leave as empty string (not extractable from text)
 
-Text:
-${text.substring(0, 3000)}`;
+2. summary: Professional summary or profile section (usually under the name or at the top)
+
+3. experience: Array of work experiences, ordered from most recent to oldest. For each job:
+   - company: Company name
+   - position: Job title/position
+   - startDate: Start date in YYYY-MM format (if only year, use YYYY-01)
+   - endDate: End date in YYYY-MM format, or "Present" if current
+   - current: true if endDate is "Present" or if no end date and job is current
+   - description: Responsibilities and achievements (bullet points or paragraph)
+
+4. education: Array of education entries, ordered from most recent to oldest. For each:
+   - institution: School/university name
+   - degree: Degree name (e.g., Bachelor of Science, Master's)
+   - field: Field of study or major
+   - startDate: Start date in YYYY-MM format
+   - endDate: End date in YYYY-MM format
+   - grade: GPA, honors, or grade if mentioned
+
+5. skills:
+   - First, look for a skills section or any listing of technologies, programming languages, tools, frameworks, etc.
+   - Group skills by logical categories (e.g., Back End, Front End, Database, Tools, Languages, Frameworks, Cloud, DevOps, etc.).
+   - Each group should have:
+        * category: The category name (string)
+        * items: Array of specific skill strings in that category
+   - If no clear categories exist but skills are listed, put all skills in one group with category "Technical Skills".
+   - If no skills are found, return an empty array.
+
+6. languages: Array of languages with proficiency levels
+   - name: Language name (English, Spanish, etc.)
+   - level: Proficiency level (Beginner, Intermediate, Advanced, Native or Fluent)
+
+7. certifications: Array of certifications
+   - name: Certification name
+   - issuer: Organization that issued the certification
+   - date: Date obtained in YYYY-MM format (or just year)
+
+Important rules:
+- Return ONLY valid JSON, no markdown code blocks
+- If a field is not found, use empty string for strings, empty array for arrays
+- For dates: use YYYY-MM format. If only year is given, use YYYY-01
+- For experience: set current=true if end date is "Present" or if no end date and it's the most recent job
+- For skills: group similar skills together under logical categories
+- Generate unique IDs for each array element (you can use placeholder IDs, they will be replaced)
+- The text to extract from is:
+
+${text.substring(0, 4000)}`;
 
   const response = await callOpenRouter([
     {

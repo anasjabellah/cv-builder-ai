@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import type { CVFormData, CVStyle } from '@/types';
 import { emptyFormData } from '@/types';
+import { validateFormData, ValidationErrors } from '@/lib/validation';
 import PersonalInfo from './PersonalInfo';
 import WorkExperience from './WorkExperience';
 import Education from './Education';
@@ -39,6 +40,8 @@ export default function CVForm({
     certifications: true,
   });
 
+  const [errors, setErrors] = useState<ValidationErrors>({});
+
   const toggle = (key: SectionKey) => {
     setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
   };
@@ -63,14 +66,24 @@ export default function CVForm({
 
   const updatePersonal = (personalInfo: typeof data.personalInfo) => {
     onChange({ ...data, personalInfo });
+    // Clear errors for this section on change
+    if (errors.personalInfo) {
+      setErrors(prev => ({ ...prev, personalInfo: undefined }));
+    }
   };
 
   const updateExperience = (experience: typeof data.experience) => {
     onChange({ ...data, experience });
+    if (errors.experience) {
+      setErrors(prev => ({ ...prev, experience: undefined }));
+    }
   };
 
   const updateEducation = (education: typeof data.education) => {
     onChange({ ...data, education });
+    if (errors.education) {
+      setErrors(prev => ({ ...prev, education: undefined }));
+    }
   };
 
   const updateSkills = (skills: typeof data.skills) => {
@@ -91,6 +104,13 @@ export default function CVForm({
 
   const resetForm = () => {
     onChange(emptyFormData());
+    setErrors({});
+  };
+
+  const handleGenerate = () => {
+    const validationErrors = validateFormData(data);
+    setErrors(validationErrors);
+    onGenerate();
   };
 
   return (
@@ -99,7 +119,14 @@ export default function CVForm({
       {sectionHeader('personal', '👤 Personal Info')}
       {openSections.personal && (
         <div className="px-4 pb-3">
-          <PersonalInfo data={data.personalInfo} onChange={updatePersonal} />
+          <PersonalInfo
+            data={data.personalInfo}
+            onChange={updatePersonal}
+            errors={errors.personalInfo}
+          />
+          {errors.form && (
+            <p className="text-xs text-red-500 mt-2">{errors.form}</p>
+          )}
         </div>
       )}
 
@@ -121,7 +148,11 @@ export default function CVForm({
       {sectionHeader('experience', '💼 Work Experience', data.experience.length)}
       {openSections.experience && (
         <div className="px-4 pb-3">
-          <WorkExperience data={data.experience} onChange={updateExperience} />
+          <WorkExperience
+            data={data.experience}
+            onChange={updateExperience}
+            errors={errors.experience}
+          />
         </div>
       )}
 
@@ -129,7 +160,11 @@ export default function CVForm({
       {sectionHeader('education', '🎓 Education', data.education.length)}
       {openSections.education && (
         <div className="px-4 pb-3">
-          <Education data={data.education} onChange={updateEducation} />
+          <Education
+            data={data.education}
+            onChange={updateEducation}
+            errors={errors.education}
+          />
         </div>
       )}
 
@@ -169,7 +204,7 @@ export default function CVForm({
         </Button>
         <Button
           variant="primary"
-          onClick={onGenerate}
+          onClick={handleGenerate}
           loading={generating}
           className="flex-2 cursor-pointer"
           type="button"
