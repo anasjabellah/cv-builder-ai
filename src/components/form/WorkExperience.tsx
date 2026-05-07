@@ -7,7 +7,7 @@ import Textarea from '@/components/ui/Textarea';
 import Button from '@/components/ui/Button';
 
 interface WorkExperienceProps {
-  errors?: { company?: string; position?: string }[];
+  errors?: { startDate?: string; endDate?: string }[];
   data: ExperienceEntry[];
   onChange: (data: ExperienceEntry[]) => void;
 }
@@ -85,7 +85,6 @@ export default function WorkExperience({ data, onChange, errors }: WorkExperienc
               value={exp.company}
               onChange={(e) => update(i, 'company', e.target.value)}
               placeholder="Acme Inc."
-              error={errors?.[i]?.company}
             />
             <Input
               label="Position"
@@ -98,6 +97,7 @@ export default function WorkExperience({ data, onChange, errors }: WorkExperienc
               value={exp.startDate}
               onChange={(e) => update(i, 'startDate', e.target.value)}
               placeholder="Jan 2020"
+              error={errors?.[i]?.startDate}
             />
             <div className="space-y-1">
               <Input
@@ -106,6 +106,7 @@ export default function WorkExperience({ data, onChange, errors }: WorkExperienc
                 onChange={(e) => update(i, 'endDate', e.target.value)}
                 placeholder="Dec 2023"
                 disabled={exp.current}
+                error={errors?.[i]?.endDate}
               />
               <label className="flex items-center gap-2 text-xs text-[#A1A1AA] cursor-pointer">
                 <input

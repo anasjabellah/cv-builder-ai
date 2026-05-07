@@ -6,7 +6,7 @@ import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 
 interface EducationProps {
-  errors?: { institution?: string; degree?: string }[];
+  errors?: { startDate?: string; endDate?: string }[];
   data: EducationEntry[];
   onChange: (data: EducationEntry[]) => void;
 }
@@ -84,14 +84,12 @@ export default function Education({ data, onChange, errors }: EducationProps) {
               value={edu.institution}
               onChange={(e) => update(i, 'institution', e.target.value)}
               placeholder="University of XYZ"
-              error={errors?.[i]?.institution}
             />
             <Input
               label="Degree"
               value={edu.degree}
               onChange={(e) => update(i, 'degree', e.target.value)}
               placeholder="Bachelor's"
-              error={errors?.[i]?.degree}
             />
             <Input
               label="Field of Study"
@@ -110,12 +108,14 @@ export default function Education({ data, onChange, errors }: EducationProps) {
               value={edu.startDate}
               onChange={(e) => update(i, 'startDate', e.target.value)}
               placeholder="Sep 2016"
+              error={errors?.[i]?.startDate}
             />
             <Input
               label="End Date"
               value={edu.endDate}
               onChange={(e) => update(i, 'endDate', e.target.value)}
               placeholder="Jun 2020"
+              error={errors?.[i]?.endDate}
             />
           </div>
         </div>

@@ -23,11 +23,11 @@ export default function Button({
 
   const variants = {
     primary:
-      'bg-[#7C3AED] text-white hover:bg-[#6D28D9] shadow-lg shadow-[#7C3AED]/25',
+      'bg-primary text-white hover:bg-primary-hover shadow-lg shadow-primary/25',
     secondary:
-      'bg-[#1A1A1A] text-white border border-[#27272A] hover:bg-[#27272A]',
-    danger: 'bg-red-600 text-white hover:bg-red-700',
-    ghost: 'bg-transparent text-[#A1A1AA] hover:text-white hover:bg-[#1A1A1A]',
+      'bg-surface-light text-white border border-border hover:bg-surface-hover',
+    danger: 'bg-danger text-white hover:bg-red-700',
+    ghost: 'bg-transparent text-text-secondary hover:text-white hover:bg-surface-hover',
   };
 
   const sizes = {

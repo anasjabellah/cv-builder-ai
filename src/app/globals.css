@@ -1,22 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Overpass+Mono:wght@400;700&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #0A0A0A;
-  --surface: #111111;
-  --surface-hover: #1A1A1A;
-  --border: #27272A;
-  --accent: #7C3AED;
-  --accent-hover: #6D28D9;
-  --text-primary: #FFFFFF;
-  --text-secondary: #A1A1AA;
-  --text-muted: #52525B;
-  font-family: 'Inter', sans-serif;
+  --color-primary: #C800DF;
+  --color-primary-hover: #A600B8;
+  --color-secondary: #E60076;
+  --color-secondary-hover: #C00062;
+  --color-success: #16A34A;
+  --color-warning: #D97706;
+  --color-danger: #DC2626;
+  --color-surface: #FFFFFF;
+  --color-text: #111827;
+  --color-neutral: #FFFFFF;
+  --font-sans: 'Jost', sans-serif;
+  --font-display: 'Jost', sans-serif;
+  --font-mono: 'Overpass Mono', monospace;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
 }
 
 body {
-  background-color: var(--background);
-  color: var(--text-primary);
-  margin: 0;
+  background: radial-gradient(ellipse at 80% 20%, #C800DF18 0%, transparent 50%),
+              radial-gradient(ellipse at 20% 80%, #E6007618 0%, transparent 50%),
+              linear-gradient(135deg, #08000A 0%, #10000F 50%, #08000A 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  color: var(--color-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -28,16 +43,16 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--background);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
+  background: rgba(200, 200, 200, 0.3);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
+  background: rgba(200, 200, 200, 0.5);
 }
 
 /* Smooth transitions */
@@ -47,15 +62,46 @@ body {
   transition-timing-function: ease-in-out;
 }
 
+/* Fade-in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
 /* Tailwind v4 theme */
 @theme {
-  --color-bg-primary: #0A0A0A;
-  --color-bg-surface: #111111;
-  --color-bg-surface-hover: #1A1A1A;
-  --color-border: #27272A;
-  --color-accent: #7C3AED;
-  --color-accent-hover: #6D28D9;
-  --color-text-primary: #FFFFFF;
-  --color-text-secondary: #A1A1AA;
-  --color-text-muted: #52525B;
+  --color-primary: #C800DF;
+  --color-primary-hover: #A600B8;
+  --color-secondary: #E60076;
+  --color-secondary-hover: #C00062;
+  --color-success: #16A34A;
+  --color-warning: #D97706;
+  --color-danger: #DC2626;
+  --color-surface: #FFFFFF;
+  --color-text: #111827;
+  --color-neutral: #FFFFFF;
+  --font-sans: 'Jost', sans-serif;
+  --font-display: 'Jost', sans-serif;
+  --font-mono: 'Overpass Mono', monospace;
+}
+
+/* Text visibility fixes */
+* {
+  color: inherit;
+}
+
+body {
+  color: #FFFFFF;
+}
+
+header, header * {
+  color: #FFFFFF !important;
+}
+
+nav a, header a, header button {
+  color: #FFFFFF !important;
+  opacity: 1 !important;
 }

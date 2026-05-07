@@ -18,7 +18,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={inter.className}>
-        <main className="min-h-screen bg-[#0A0A0A] text-white">
+        {/* Containing a full‑height bento grid for future sections */}
+        <main className="min-h-screen bg-transparent grid grid-rows-[auto_1fr] gap-4 p-4">
+          {/* Header slot could be injected by pages */}
           {children}
         </main>
       </body>
