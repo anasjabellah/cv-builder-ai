@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import type { CVFormData, CVStyle } from '@/types';
 import { emptyFormData } from '@/types';
 import CVUpload from '@/components/upload/CVUpload';
@@ -15,6 +15,7 @@ import { auth, googleProvider, firestore } from '@/lib/firebase';
 import Link from 'next/link';
 import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+// framer-motion removed - using static HTML
 
 type Step = 'upload' | 'form';
 
@@ -29,6 +30,7 @@ export default function HomePage() {
   const [user, setUser] = useState<any>(null);
   const [atsResult, setAtsResult] = useState<any>(null);
   const [checkingATS, setCheckingATS] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Listen for auth state changes and load saved CV data
   useEffect(() => {
@@ -121,16 +123,47 @@ export default function HomePage() {
     handleGenerate();
   }, [handleGenerate]);
 
-  // Shared header
+  // Custom file upload handler
+  const handleFileUpload = useCallback(async (file: File) => {
+    const allowed = [
+      'application/pdf',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/msword',
+    ];
+    if (!allowed.includes(file.type)) {
+      handleUploadError('Please upload a PDF or Word document (.pdf, .doc, .docx)');
+      return;
+    }
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await fetch('/api/parse-cv', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to parse CV');
+      handleParsed(data.formData);
+    } catch (err) {
+      handleUploadError(err instanceof Error ? err.message : 'Failed to parse CV');
+    }
+  }, [handleParsed, handleUploadError]);
+
+  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleFileUpload(file);
+  }, [handleFileUpload]);
+
+  // Shared header with glass effect
   const header = (
-    <header className="border-b border-[rgba(168,85,247,0.15)] bg-[rgba(255,255,255,0.03)] backdrop-blur-sm sticky top-0 z-50">
-      <div className="max-w-[1600px] mx-auto px-6 py-4 flex items-center justify-between">
+    <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-4xl px-4">
+      <div className="backdrop-blur-md bg-black/20 border border-white/10 rounded-full px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-[#C800DF] flex items-center justify-center">
             <span className="text-white font-bold text-sm">CV</span>
           </div>
-          <span className="text-lg font-semibold text-text-primary">
-            CV Builder <span className="text-primary">AI</span>
+          <span className="text-lg font-semibold text-white">
+            CV Builder <span className="text-[#C800DF]">AI</span>
           </span>
         </div>
         <div className="flex items-center gap-3">
@@ -156,7 +189,7 @@ export default function HomePage() {
             </Button>
           )}
           <Link href="/job-matcher" className="cursor-pointer">
-            <Button variant="ghost" className="text-sm ml-2">
+            <Button variant="ghost" className="text-sm">
               Job Matcher
             </Button>
           </Link>
@@ -165,39 +198,139 @@ export default function HomePage() {
     </header>
   );
 
-  // Upload section
+  // Upload section - Premium AI SaaS landing page
   const uploadSection = (
-    <main className="flex-1 flex items-center justify-center px-6 py-20">
-      <div className="w-full max-w-2xl">
-        <div className="text-center mb-12">
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-4 tracking-tight">
-            Turn your old CV into a{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-hover">
-              stunning
-            </span>{' '}
-            one
-          </h1>
-          <p className="text-xl text-secondary">
-            Powered by AI — upload, edit, generate, export.
-          </p>
-        </div>
-        {error && (
-          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm">
-            {error}
-          </div>
-        )}
-        <CVUpload onParsed={handleParsed} onError={handleUploadError} />
-        <div className="mt-8 text-center">
-          <p className="text-sm text-muted mb-3">or</p>
-          <Button variant="secondary" onClick={handleManualStart} className="cursor-pointer" type="button">
-            Fill the form manually
-          </Button>
-        </div>
+    <div className="min-h-screen flex flex-col relative overflow-hidden">
+      {/* Background effects */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute -top-20 -right-20 w-96 h-96 bg-[#C800DF] opacity-15 rounded-full blur-3xl" />
+        <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-[#E60076] opacity-10 rounded-full blur-3xl" />
       </div>
-    </main>
+
+      {header}
+
+      {/* Hero Section */}
+      <main className="flex-1 flex items-center justify-center px-6 py-20 relative z-10">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          {/* Left side */}
+          <div>
+            <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
+              Turn your CV into a{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#C800DF] to-[#E60076]">
+                stunning one
+              </span>
+            </h1>
+            <p className="text-xl text-[#A1A1AA] font-mono mb-8">
+              Powered by AI — upload, edit, generate, export.
+            </p>
+            <div className="flex gap-4">
+              <label className="cursor-pointer">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".pdf,.doc,.docx"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+                <Button
+                  variant="primary"
+                  className="bg-gradient-to-r from-[#C800DF] to-[#E60076] border-0 text-white"
+                  onClick={() => fileInputRef.current?.click()}
+                  type="button"
+                >
+                  Upload CV
+                </Button>
+              </label>
+              <Button variant="ghost" onClick={handleManualStart} type="button">
+                Fill Manually
+              </Button>
+            </div>
+            {error && (
+              <div className="mt-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm">
+                {error}
+              </div>
+            )}
+          </div>
+
+          {/* Right side - Floating cards */}
+          <div className="relative h-96 hidden lg:block">
+            {/* Fake CV preview */}
+            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 shadow-[0_0_30px_rgba(200,200,200,0.1)]">
+              <div className="space-y-4">
+                <div className="h-4 bg-white/10 rounded w-3/4"></div>
+                <div className="h-3 bg-white/5 rounded w-full"></div>
+                <div className="h-3 bg-white/5 rounded w-5/6"></div>
+                <div className="space-y-2 mt-4">
+                  <div className="h-3 bg-white/10 rounded w-1/4"></div>
+                  <div className="h-3 bg-white/5 rounded w-full"></div>
+                  <div className="h-3 bg-white/5 rounded w-5/6"></div>
+                </div>
+              </div>
+            </div>
+
+            {/* ATS Score badge */}
+            <div className="absolute -top-4 -right-4 bg-white/10 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-2">
+              <span className="text-white font-bold">ATS Score: 87%</span>
+            </div>
+
+            {/* AI Analyzing card */}
+            <div className="absolute -bottom-4 -left-4 bg-white/10 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-2">
+              <span className="text-white text-sm">🤖 AI Analyzing...</span>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {/* Features Bento Grid */}
+      <section className="max-w-7xl mx-auto px-6 py-20 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* AI Extraction */}
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:scale-105 transition-transform duration-300">
+            <div className="text-3xl mb-3">⚡</div>
+            <h3 className="text-white font-bold mb-2">AI Extraction</h3>
+            <p className="text-[#A1A1AA] text-sm">Upload any CV, AI extracts data automatically</p>
+          </div>
+
+          {/* 3 Templates */}
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:scale-105 transition-transform duration-300">
+            <div className="text-3xl mb-3">🎨</div>
+            <h3 className="text-white font-bold mb-2">3 Templates</h3>
+            <p className="text-[#A1A1AA] text-sm">Modern, Classic, Creative styles</p>
+          </div>
+
+          {/* ATS Score */}
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:scale-105 transition-transform duration-300">
+            <div className="text-3xl mb-3">📊</div>
+            <h3 className="text-white font-bold mb-2">ATS Score</h3>
+            <p className="text-[#A1A1AA] text-sm">Check ATS compatibility instantly</p>
+          </div>
+
+          {/* Job Matcher */}
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:scale-105 transition-transform duration-300 md:col-span-1">
+            <div className="text-3xl mb-3">🎯</div>
+            <h3 className="text-white font-bold mb-2">Job Matcher</h3>
+            <p className="text-[#A1A1AA] text-sm">Match CV with job descriptions</p>
+          </div>
+
+          {/* Export PDF */}
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:scale-105 transition-transform duration-300">
+            <div className="text-3xl mb-3">📄</div>
+            <h3 className="text-white font-bold mb-2">Export PDF</h3>
+            <p className="text-[#A1A1AA] text-sm">Download as PDF or Word document</p>
+          </div>
+
+          {/* Auto Save */}
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:scale-105 transition-transform duration-300">
+            <div className="text-3xl mb-3">🔒</div>
+            <h3 className="text-white font-bold mb-2">Auto Save</h3>
+            <p className="text-[#A1A1AA] text-sm">Firebase saves your data securely</p>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 
-  // Form section
+  // Form section (unchanged)
   const formSection = (
     <>
       <div className="border-b border-[rgba(168,85,247,0.15)] bg-[rgba(255,255,255,0.03)] backdrop-blur-sm">
@@ -257,7 +390,6 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-transparent">
-      {header}
       {step === 'upload' ? uploadSection : formSection}
     </div>
   );
