@@ -9,6 +9,7 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { auth, firestore } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
+import Navbar from '@/components/layout/Navbar';
 
 export default function JobMatcher() {
   const [user, setUser] = useState<any>(null);
@@ -106,26 +107,9 @@ export default function JobMatcher() {
 
   return (
     <div className="min-h-screen bg-transparent text-[#E2E8F0]">
-      {/* Header */}
-      <header className="border-b border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-[1600px] mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-white font-bold text-sm">CV</span>
-            </div>
-            <span className="text-lg font-semibold text-text-primary">
-              CV Builder <span className="text-primary">AI</span>
-            </span>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link href="/" className="cursor-pointer">
-              <Button variant="ghost" className="text-sm" type="button">
-                ← Back to CV Builder
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </header>
+
+      {/* Shared Navbar */}
+      <Navbar showBackToHome showLogin showJobMatcher={false} />
 
       <main className="max-w-4xl mx-auto px-6 py-12">
         <h1 className="text-3xl font-bold mb-8">Job Matcher</h1>
@@ -192,7 +176,7 @@ export default function JobMatcher() {
               )}
               <p className="text-xs text-[#52525B] mt-3">
                 Need a CV?{' '}
-                <Link href="/" className="text-[primary] hover:underline">
+                <Link href="/" className="text-[#C800DF] hover:underline">
                   Create one in CV Builder
                 </Link>
               </p>
@@ -218,8 +202,9 @@ export default function JobMatcher() {
         {/* Results */}
         {result && (
           <div className="space-y-6 fade-in max-w-2xl mx-auto">
+
             {/* Match Percentage Card */}
-            <div className="bg-gradient-to-r from-[#7C3AED] to-[#EC4899] rounded-[16px] p-6 text-center">
+            <div className="bg-gradient-to-r from-[#C800DF18] to-[#E6007618] rounded-[16px] p-6 text-center">
               <h2 className="text-white font-bold text-lg uppercase mb-4">Match Percentage</h2>
               <p className="text-7xl font-black text-white">{result.matchPercentage ?? 'N/A'}%</p>
               <div className="w-full h-2 bg-white/20 rounded-full overflow-hidden mt-4">

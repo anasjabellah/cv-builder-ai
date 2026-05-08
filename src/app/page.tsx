@@ -12,10 +12,9 @@ import ATSResult from '@/components/ui/ATSResult';
 import Button from '@/components/ui/Button';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { auth, googleProvider, firestore } from '@/lib/firebase';
-import Link from 'next/link';
-import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-// framer-motion removed - using static HTML
+import Navbar from '@/components/layout/Navbar';
 
 type Step = 'upload' | 'form';
 
@@ -154,50 +153,6 @@ export default function HomePage() {
     if (file) handleFileUpload(file);
   }, [handleFileUpload]);
 
-  // Shared header with glass effect
-  const header = (
-    <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-4xl px-4">
-      <div className="backdrop-blur-md bg-black/20 border border-white/10 rounded-full px-6 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-[#C800DF] flex items-center justify-center">
-            <span className="text-white font-bold text-sm">CV</span>
-          </div>
-          <span className="text-lg font-semibold text-white">
-            CV Builder <span className="text-[#C800DF]">AI</span>
-          </span>
-        </div>
-        <div className="flex items-center gap-3">
-          <Button
-            variant="secondary"
-            onClick={async () => { try { await signInWithPopup(auth, googleProvider); } catch (e: any) { if (e?.code !== 'auth/popup-closed-by-user') { setError(e?.message || 'Authentication failed'); } } }}
-            className="cursor-pointer text-sm"
-            type="button"
-          >
-            Login with Google
-          </Button>
-          {step === 'form' && (
-            <Button
-              variant="ghost"
-              onClick={() => {
-                setStep("upload");
-                setGeneratedHtml(null);
-              }}
-              className="cursor-pointer text-sm"
-              type="button"
-            >
-              ← Upload New CV
-            </Button>
-          )}
-          <Link href="/job-matcher" className="cursor-pointer">
-            <Button variant="ghost" className="text-sm">
-              Job Matcher
-            </Button>
-          </Link>
-        </div>
-      </div>
-    </header>
-  );
-
   // Upload section - Premium AI SaaS landing page
   const uploadSection = (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
@@ -207,7 +162,7 @@ export default function HomePage() {
         <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-[#E60076] opacity-10 rounded-full blur-3xl" />
       </div>
 
-      {header}
+      <Navbar showLogin showJobMatcher showUploadNew={false} step={step} onStepChange={setStep} onGeneratedHtmlChange={setGeneratedHtml} />
 
       {/* Hero Section */}
       <main className="flex-1 flex items-center justify-center px-6 py-20 relative z-10">
@@ -217,8 +172,9 @@ export default function HomePage() {
             <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
               Turn your CV into a{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#C800DF] to-[#E60076]">
-                stunning one
+                stunning
               </span>
+              one
             </h1>
             <p className="text-xl text-[#A1A1AA] font-mono mb-8">
               Powered by AI — upload, edit, generate, export.
@@ -255,7 +211,7 @@ export default function HomePage() {
           {/* Right side - Floating cards */}
           <div className="relative h-96 hidden lg:block">
             {/* Fake CV preview */}
-            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 shadow-[0_0_30px_rgba(200,200,200,0.1)]">
+            <div className="bg-white/5 backdrop-blur-sm border border-[#C800DF]/30 rounded-2xl p-6 bg-white/5 shadow-[0_0_40px_rgba(200,0,223,0.15)]">
               <div className="space-y-4">
                 <div className="h-4 bg-white/10 rounded w-3/4"></div>
                 <div className="h-3 bg-white/5 rounded w-full"></div>
