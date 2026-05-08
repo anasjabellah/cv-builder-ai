@@ -11,7 +11,7 @@ import ExportButtons from '@/components/export/ExportButtons';
 import ATSResult from '@/components/ui/ATSResult';
 import Button from '@/components/ui/Button';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
-import { auth, googleProvider, firestore } from '@/lib/firebase';
+import { auth, firestore } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import Navbar from '@/components/layout/Navbar';
@@ -211,7 +211,7 @@ export default function HomePage() {
           {/* Right side - Floating cards */}
           <div className="relative h-96 hidden lg:block">
             {/* Fake CV preview */}
-            <div className="bg-white/5 backdrop-blur-sm border border-[#C800DF]/30 rounded-2xl p-6 bg-white/5 shadow-[0_0_40px_rgba(200,0,223,0.15)]">
+            <div className="bg-white/5 backdrop-blur-sm border border-[#C800DF]/30 rounded-2xl p-6 shadow-[0_0_40px_rgba(200,0,223,0.15)]">
               <div className="space-y-4">
                 <div className="h-4 bg-white/10 rounded w-3/4"></div>
                 <div className="h-3 bg-white/5 rounded w-full"></div>

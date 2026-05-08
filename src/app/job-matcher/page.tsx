@@ -122,7 +122,7 @@ export default function JobMatcher() {
       <Navbar showBackToHome showLogin showJobMatcher={false} />
 
       <main className="max-w-6xl mx-auto px-6 pt-28 pb-12">
-        <p className="text-[#A1A1AA] mb-8 mt-4" style={{ fontFamily: 'Jost', fontSize: '3rem' }}>Job Matcher</p>
+        <p className="text-[#A1A1AA] mb-8 mt-4 text-[3rem]">Job Matcher</p>
 
         {error && (
           <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm">
