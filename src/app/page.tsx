@@ -171,10 +171,10 @@ export default function HomePage() {
           <div>
             <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
               Turn your CV into a{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#C800DF] to-[#E60076]">
+              <span className="bg-gradient-to-r from-[#C800DF] to-[#E60076] bg-clip-text text-transparent">
                 stunning
               </span>
-              one
+              {' '}one
             </h1>
             <p className="text-xl text-[#A1A1AA] font-mono mb-8">
               Powered by AI — upload, edit, generate, export.

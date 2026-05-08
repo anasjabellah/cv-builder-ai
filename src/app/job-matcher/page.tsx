@@ -18,6 +18,10 @@ export default function JobMatcher() {
   const [uploadLoading, setUploadLoading] = useState(false);
   const [jobDescription, setJobDescription] = useState<string>('');
   const [result, setResult] = useState<any>(null);
+  const matchPercentage = result?.matchPercentage ?? 0;
+  const radius = 70;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (matchPercentage / 100) * circumference;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -106,13 +110,19 @@ export default function JobMatcher() {
   }, [cvData, jobDescription]);
 
   return (
-    <div className="min-h-screen bg-transparent text-[#E2E8F0]">
+    <div className="min-h-screen bg-transparent text-white relative">
+
+      {/* Background effects */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute -top-20 -right-20 w-96 h-96 bg-[#C800DF] opacity-15 rounded-full blur-3xl" />
+        <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-[#E60076] opacity-10 rounded-full blur-3xl" />
+      </div>
 
       {/* Shared Navbar */}
       <Navbar showBackToHome showLogin showJobMatcher={false} />
 
-      <main className="max-w-4xl mx-auto px-6 py-12">
-        <h1 className="text-3xl font-bold mb-8">Job Matcher</h1>
+      <main className="max-w-6xl mx-auto px-6 pt-28 pb-12">
+        <p className="text-[#A1A1AA] mb-8 mt-4" style={{ fontFamily: 'Jost', fontSize: '3rem' }}>Job Matcher</p>
 
         {error && (
           <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm">
@@ -201,80 +211,104 @@ export default function JobMatcher() {
 
         {/* Results */}
         {result && (
-          <div className="space-y-6 fade-in max-w-2xl mx-auto">
+          <div className="space-y-5 fade-in max-w-5xl mx-auto">
+            <div className="grid grid-cols-3 gap-5">
 
-            {/* Match Percentage Card */}
-            <div className="bg-gradient-to-r from-[#C800DF18] to-[#E6007618] rounded-[16px] p-6 text-center">
-              <h2 className="text-white font-bold text-lg uppercase mb-4">Match Percentage</h2>
-              <p className="text-7xl font-black text-white">{result.matchPercentage ?? 'N/A'}%</p>
-              <div className="w-full h-2 bg-white/20 rounded-full overflow-hidden mt-4">
-                <div
-                  className="h-full bg-white rounded-full transition-all duration-700"
-                  style={{ width: `${Math.min(100, Math.max(0, result.matchPercentage ?? 0))}%` }}
-                />
+              {/* Match % - col-span-1 */}
+              <div className="result-card bg-[rgba(255,255,255,0.06)] rounded-[20px] p-6 col-span-1 flex flex-col items-center justify-center">
+                <p className="text-xs text-[#A1A1AA] uppercase mb-1">Match</p>
+                <svg width="180" height="180" viewBox="0 0 180 180">
+                  <circle cx="90" cy="90" r={radius} fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="12"/>
+                  <circle cx="90" cy="90" r={radius} fill="none"
+                    stroke="url(#grad)" strokeWidth="12"
+                    strokeDasharray={circumference}
+                    strokeDashoffset={offset}
+                    strokeLinecap="round"
+                    transform="rotate(-90 90 90)"/>
+                  <defs>
+                    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#C800DF"/>
+                      <stop offset="100%" stopColor="#E60076"/>
+                    </linearGradient>
+                  </defs>
+                  <text x="90" y="90" textAnchor="middle" dy="0.35em"
+                    fill="white" fontSize="28" fontWeight="900">
+                    {matchPercentage}%
+                  </text>
+                </svg>
               </div>
-            </div>
 
-            {/* 4-card grid: Strengths, Gaps, Keywords, Interview */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Strengths */}
+              {/* Why fit - col-span-2 */}
               {result.strengths?.length > 0 && (
-                <div className="bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] rounded-[16px] p-6 h-full">
-                  <h2 className="text-white font-bold uppercase mb-3">✅ Why you are a good fit</h2>
-                  <ul className="list-disc list-inside space-y-1 text-sm text-[#A1A1AA]">
+                <div className="result-card bg-[rgba(255,255,255,0.06)] rounded-[20px] p-6 col-span-2">
+                  <p className="text-xs text-[#A1A1AA] uppercase mb-1">Why you are a good fit</p>
+                  <div className="flex flex-wrap gap-2 mt-4">
                     {result.strengths.map((s: string, i: number) => (
-                      <li key={i}>{s}</li>
+                      <span key={i} className="inline-flex items-center gap-1 bg-green-500/10 text-green-400 text-sm px-3 py-1.5 rounded-full">
+                        ✓ {s}
+                      </span>
                     ))}
-                  </ul>
+                  </div>
                 </div>
               )}
 
-              {/* Gaps */}
-              {result.gaps?.length > 0 && (
-                <div className="bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] rounded-[16px] p-6 h-full">
-                  <h2 className="text-white font-bold uppercase mb-3">⚠️ Missing in your CV</h2>
-                  <ul className="list-disc list-inside space-y-1 text-sm text-[#A1A1AA]">
-                    {result.gaps.map((g: string, i: number) => (
-                      <li key={i}>{g}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Keywords to Add */}
+              {/* Keywords - col-span-1 */}
               {result.keywordsToAdd?.length > 0 && (
-                <div className="bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] rounded-[16px] p-6 h-full">
-                  <h2 className="text-white font-bold uppercase mb-3">🔑 Keywords to Add</h2>
-                  <ul className="list-disc list-inside space-y-1 text-sm text-[#A1A1AA]">
+                <div className="result-card bg-[rgba(255,255,255,0.06)] rounded-[20px] p-6 col-span-1">
+                  <p className="text-xs text-[#A1A1AA] uppercase mb-1">Keywords</p>
+                  <div className="flex flex-wrap gap-2 mt-4">
                     {result.keywordsToAdd.map((k: string, i: number) => (
-                      <li key={i}>{k}</li>
+                      <span key={i} className="bg-purple-500/10 text-purple-300 text-xs px-3 py-1 rounded-full">
+                        {k}
+                      </span>
                     ))}
-                  </ul>
+                  </div>
                 </div>
               )}
 
-              {/* Interview Questions */}
-              {result.interviewQuestions?.length > 0 && (
-                <div className="bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] rounded-[16px] p-6 h-full">
-                  <h2 className="text-white font-bold uppercase mb-3">❓ Likely Interview Questions</h2>
-                  <ul className="list-disc list-inside space-y-1 text-sm text-[#A1A1AA]">
-                    {result.interviewQuestions.map((q: string, i: number) => (
-                      <li key={i}>{q}</li>
+              {/* Missing - col-span-1 */}
+              {result.gaps?.length > 0 && (
+                <div className="result-card bg-[rgba(255,255,255,0.06)] rounded-[20px] p-6 col-span-1">
+                  <p className="text-xs text-[#A1A1AA] uppercase mb-1">Missing</p>
+                  <div className="space-y-2 mt-4">
+                    {result.gaps.map((g: string, i: number) => (
+                      <span key={i} className="inline-flex items-center gap-1 bg-orange-500/10 text-orange-400 text-sm px-3 py-1.5 rounded-lg block">
+                        ⚠ {g}
+                      </span>
                     ))}
-                  </ul>
+                  </div>
                 </div>
               )}
+
+              {/* Questions - col-span-1 */}
+              {result.interviewQuestions?.length > 0 && (
+                <div className="result-card bg-[rgba(255,255,255,0.06)] rounded-[20px] p-6 col-span-1">
+                  <p className="text-xs text-[#A1A1AA] uppercase mb-1">Questions</p>
+                  <div className="space-y-2 mt-4">
+                    {result.interviewQuestions.map((q: string, i: number) => (
+                      <div key={i} className="flex items-start gap-2">
+                        <span className="bg-blue-500/20 text-blue-400 text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5">{i+1}</span>
+                        <p className="text-sm text-[#E2E8F0]">{q}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
             </div>
 
-            {/* Tips Card - full width below grid */}
+            {/* Tips - full width */}
             {result.tips?.length > 0 && (
-              <div className="bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] rounded-[16px] p-6">
-                <h2 className="text-white font-bold uppercase mb-3">💡 Tips to improve CV</h2>
-                <ul className="list-disc list-inside space-y-1 text-sm text-[#A1A1AA]">
+              <div className="result-card bg-[rgba(255,255,255,0.06)] rounded-[20px] p-6 col-span-3">
+                <p className="text-xs text-[#A1A1AA] uppercase mb-1">Tips to improve</p>
+                <div className="space-y-3 mt-4">
                   {result.tips.map((t: string, i: number) => (
-                    <li key={i}>{t}</li>
+                    <div key={i} className="flex items-start gap-3">
+                      <span className="bg-gradient-to-r from-[#C800DF] to-[#E60076] text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shrink-0">{i+1}</span>
+                      <p className="text-sm text-[#E2E8F0]">{t}</p>
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
             )}
           </div>
