@@ -3,17 +3,29 @@
 import { useState } from 'react';
 import type { CVFormData } from '@/types';
 import Button from '@/components/ui/Button';
+import Toast from '@/components/ui/Toast';
 
 interface ExportButtonsProps {
   html: string | null;
   formData: CVFormData;
   style: string;
+  disabled?: boolean;
 }
 
-export default function ExportButtons({ html, formData, style }: ExportButtonsProps) {
+export default function ExportButtons({ html, formData, style, disabled = false }: ExportButtonsProps) {
   const [exporting, setExporting] = useState<'pdf' | 'word' | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3000);
+  };
 
   const handleExport = async (format: 'pdf' | 'word') => {
+    if (disabled) {
+      showToast('Please sign in to use this feature');
+      return;
+    }
     setExporting(format);
     try {
       const res = await fetch('/api/export', {
@@ -41,34 +53,44 @@ export default function ExportButtons({ html, formData, style }: ExportButtonsPr
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-    } catch {
-      alert(`Failed to export ${format.toUpperCase()}. Please try again.`);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : `Failed to export ${format.toUpperCase()}. Please try again.`;
+      showToast(msg);
     } finally {
       setExporting(null);
     }
   };
 
+
   return (
-    <div className="flex gap-3">
-      <Button
-        variant="secondary"
-        onClick={() => handleExport('pdf')}
-        loading={exporting === 'pdf'}
-        disabled={!html && exporting !== 'pdf'}
-        className="flex-1 cursor-pointer"
-        type="button"
-      >
-        {exporting === 'pdf' ? 'Exporting...' : '📄 Download PDF'}
-      </Button>
-      <Button
-        variant="secondary"
-        onClick={() => handleExport('word')}
-        loading={exporting === 'word'}
-        className="flex-1 cursor-pointer"
-        type="button"
-      >
-        {exporting === 'word' ? 'Exporting...' : '📝 Download Word'}
-      </Button>
-    </div>
+    <>
+      {toast && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-[#1A1A1A] text-white px-4 py-2 rounded-md shadow-lg z-50 text-sm">
+          {toast}
+        </div>
+      )}
+      <div className="flex gap-3">
+        <Button
+          variant="secondary"
+          onClick={() => handleExport('pdf')}
+          loading={exporting === 'pdf'}
+          disabled={disabled || (!html && exporting !== 'pdf')}
+          className="flex-1 cursor-pointer"
+          type="button"
+        >
+          {exporting === 'pdf' ? 'Exporting...' : '📄 Download PDF'}
+        </Button>
+        <Button
+          variant="secondary"
+          onClick={() => handleExport('word')}
+          loading={exporting === 'word'}
+          disabled={disabled}
+          className="flex-1 cursor-pointer"
+          type="button"
+        >
+          {exporting === 'word' ? 'Exporting...' : '📝 Download Word'}
+        </Button>
+      </div>
+    </>
   );
 }

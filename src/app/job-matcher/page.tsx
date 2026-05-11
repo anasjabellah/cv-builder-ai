@@ -10,7 +10,6 @@ import { auth, firestore } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import Navbar from '@/components/layout/Navbar';
-
 export default function JobMatcher() {
   const [user, setUser] = useState<any>(null);
   const [cvData, setCvData] = useState<CVFormData | null>(null);
@@ -24,7 +23,13 @@ export default function JobMatcher() {
   const offset = circumference - (matchPercentage / 100) * circumference;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3000);
+  };
 
   // Load saved CV when user is logged in
   useEffect(() => {
@@ -80,6 +85,10 @@ export default function JobMatcher() {
   );
 
   const handleMatchJob = useCallback(async () => {
+    if (!user) {
+      showToast('Please sign in to use this feature');
+      return;
+    }
     setLoading(true);
     setError(null);
     setResult(null);
@@ -107,7 +116,7 @@ export default function JobMatcher() {
     } finally {
       setLoading(false);
     }
-  }, [cvData, jobDescription]);
+  }, [cvData, jobDescription, user]);
 
   return (
     <div className="min-h-screen bg-transparent text-white relative">
@@ -121,6 +130,15 @@ export default function JobMatcher() {
       {/* Shared Navbar */}
       <Navbar showBackToHome showLogin showJobMatcher={false} />
 
+      {/* Toast notification */}
+      {toast && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-[#1A1A1A] text-white px-4 py-2 rounded-md shadow-lg text-sm border border-white/10">
+          {toast}
+        </div>
+      )}
+
+      
+      
       <main className="max-w-6xl mx-auto px-6 pt-28 pb-12">
         <p className="text-[#A1A1AA] mb-8 mt-4 text-[3rem]">Job Matcher</p>
 
@@ -151,9 +169,7 @@ export default function JobMatcher() {
               <p className="text-sm text-[#A1A1AA]">
                 {cvFileName
                   ? `CV loaded: ${cvFileName}`
-                  : `CV loaded from your account – ${
-                      cvData?.personalInfo?.fullName || 'ready for analysis'
-                    }`}
+                  : `CV loaded from your account – ${cvData?.personalInfo?.fullName || 'ready for analysis'}`}
               </p>
               <Button
                 variant="secondary"
@@ -205,7 +221,7 @@ export default function JobMatcher() {
           />
         </div>
 
-        <Button onClick={handleMatchJob} disabled={loading || !cvData} className="w-full mb-8">
+        <Button onClick={handleMatchJob} disabled={loading || !cvData || !user} className="w-full mb-8">
           {loading ? <LoadingSpinner /> : 'Match Job'}
         </Button>
 

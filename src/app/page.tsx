@@ -29,7 +29,14 @@ export default function HomePage() {
   const [user, setUser] = useState<any>(null);
   const [atsResult, setAtsResult] = useState<any>(null);
   const [checkingATS, setCheckingATS] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Toast helper
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3000);
+  };
 
   // Listen for auth state changes and load saved CV data
   useEffect(() => {
@@ -44,6 +51,10 @@ export default function HomePage() {
           setStyle(data.style);
           if (data.generatedHtml) {
             setGeneratedHtml(data.generatedHtml);
+          }
+          // If we have saved data, move to form step
+          if (step === 'upload') {
+            setStep('form');
           }
         }
       }
@@ -68,6 +79,10 @@ export default function HomePage() {
   }, []);
 
   const handleGenerate = useCallback(async () => {
+    if (!user) {
+      showToast('Please sign in to use this feature');
+      return;
+    }
     setGenerating(true);
     setError(null);
     try {
@@ -87,9 +102,13 @@ export default function HomePage() {
     } finally {
       setGenerating(false);
     }
-  }, [formData, style]);
+  }, [formData, style, user]);
 
   const handleCheckATS = useCallback(async () => {
+    if (!user) {
+      showToast('Please sign in to use this feature');
+      return;
+    }
     setCheckingATS(true);
     setAtsResult(null);
     setError(null);
@@ -116,7 +135,7 @@ export default function HomePage() {
     } finally {
       setCheckingATS(false);
     }
-  }, [formData]);
+  }, [formData, user]);
 
   const handleRegenerate = useCallback(() => {
     handleGenerate();
@@ -174,7 +193,7 @@ export default function HomePage() {
               <span className="bg-gradient-to-r from-[#C800DF] to-[#E60076] bg-clip-text text-transparent">
                 stunning
               </span>
-              {' '}one
+              {" "}one
             </h1>
             <p className="text-xl text-[#A1A1AA] font-mono mb-8">
               Powered by AI — upload, edit, generate, export.
@@ -286,9 +305,33 @@ export default function HomePage() {
     </div>
   );
 
-  // Form section (unchanged)
+  // Form section (with auth protection)
   const formSection = (
     <>
+      {/* Auth CTA banner - shown when logged out */}
+      {!user && (
+        <div className="border-b border-[rgba(200,0,223,0.2)] bg-[rgba(200,0,223,0.05)] backdrop-blur-sm">
+          <div className="max-w-[1600px] mx-auto px-6 py-3 flex items-center justify-between">
+            <p className="text-sm text-[#C800DF]">
+              🔒 Sign in to generate, export, and save your CV
+            </p>
+            <Button
+              variant="secondary"
+              onClick={async () => {
+                const { signInWithPopup, googleProvider, auth } = await import('@/lib/firebase');
+                try { await signInWithPopup(auth, googleProvider); } catch (e: any) {
+                  if (e?.code !== 'auth/popup-closed-by-user') console.error(e?.message);
+                }
+              }}
+              className="text-sm cursor-pointer"
+              type="button"
+            >
+              Sign In
+            </Button>
+          </div>
+        </div>
+      )}
+
       <div className="border-b border-[rgba(168,85,247,0.15)] bg-[rgba(255,255,255,0.03)] backdrop-blur-sm">
         <div className="max-w-[1600px] mx-auto px-6 py-3 flex items-center gap-2 overflow-x-auto">
           {['1. Fill Info', '2. Pick Style', '3. Generate', '4. Export'].map(
@@ -322,20 +365,26 @@ export default function HomePage() {
         )}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
           <div className="space-y-4 overflow-y-auto pb-6 pr-2">
-            <CVForm data={formData} onChange={setFormData} style={style} onStyleChange={setStyle} onGenerate={handleGenerate} generating={generating} />
+            <CVForm
+              data={formData}
+              onChange={setFormData}
+              onGenerate={handleGenerate}
+              generating={generating}
+              disabled={!user}
+            />
           </div>
           <div className="space-y-4 sticky top-[120px]">
             <StylePicker selected={style} onSelect={setStyle} />
             <CVPreview key={user?.uid || 'guest'} html={generatedHtml} generating={generating} />
             {generatedHtml && (
               <div className="space-y-3">
-                <Button variant="secondary" onClick={handleRegenerate} className="w-full cursor-pointer" type="button">
+                <Button variant="secondary" onClick={handleRegenerate} className="w-full cursor-pointer" type="button" disabled={!user}>
                   🔄 Regenerate with Different Design
                 </Button>
-                <Button variant="secondary" onClick={handleCheckATS} className="w-full cursor-pointer" type="button" disabled={checkingATS}>
+                <Button variant="secondary" onClick={handleCheckATS} className="w-full cursor-pointer" type="button" disabled={!user || checkingATS}>
                   {checkingATS ? 'Checking ATS...' : 'Check ATS Score'}
                 </Button>
-                <ExportButtons html={generatedHtml} formData={formData} style={style} />
+                <ExportButtons html={generatedHtml} formData={formData} style={style} disabled={!user} />
               </div>
             )}
           </div>
@@ -346,6 +395,12 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-transparent">
+      {/* Toast notification */}
+      {toast && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-[#1A1A1A] text-white px-4 py-2 rounded-md shadow-lg text-sm border border-white/10">
+          {toast}
+        </div>
+      )}
       {step === 'upload' ? uploadSection : formSection}
     </div>
   );

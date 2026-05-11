@@ -1,11 +1,10 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
-import Button from '@/components/ui/Button';
+import { useState, useEffect } from 'react';
 import { auth, googleProvider } from '@/lib/firebase';
-import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
-import { useEffect } from 'react';
+import { onAuthStateChanged, signInWithPopup } from 'firebase/auth';
+import Button from '@/components/ui/Button';
+import UserMenu from '@/components/ui/UserMenu';
 
 interface NavbarProps {
   showLogin?: boolean;
@@ -33,6 +32,16 @@ export default function Navbar({
     return () => unsub();
   }, []);
 
+  const handleLogin = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (e: any) {
+      if (e?.code !== 'auth/popup-closed-by-user') {
+        console.error(e?.message || 'Authentication failed');
+      }
+    }
+  };
+
   return (
     <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-4xl px-4">
       <div className="backdrop-blur-md bg-black/20 border border-white/10 rounded-full px-6 py-3 flex items-center justify-between">
@@ -48,20 +57,9 @@ export default function Navbar({
 
         {/* Right side buttons */}
         <div className="flex items-center gap-3">
-          {showLogin && (
-            <Button
-              variant="secondary"
-              onClick={async () => {
-                try { await signInWithPopup(auth, googleProvider); } catch (e: any) {
-                  if (e?.code !== 'auth/popup-closed-by-user') {
-                    console.error(e?.message || 'Authentication failed');
-                  }
-                }
-              }}
-              className="cursor-pointer text-sm"
-              type="button"
-            >
-              Login with Google
+          {showBackToHome && (
+            <Button variant="ghost" className="text-sm" type="button" onClick={() => window.location.href = '/' }>
+              ← Back to CV Builder
             </Button>
           )}
 
@@ -79,20 +77,18 @@ export default function Navbar({
             </Button>
           )}
 
-          {showBackToHome && (
-            <Link href="/" className="cursor-pointer">
-              <Button variant="ghost" className="text-sm" type="button">
-                ← Back to CV Builder
-              </Button>
-            </Link>
+          {showJobMatcher && (
+            <Button variant="ghost" className="text-sm" onClick={() => window.location.href = '/job-matcher'}>
+              Job Matcher
+            </Button>
           )}
 
-          {showJobMatcher && (
-            <Link href="/job-matcher" className="cursor-pointer">
-              <Button variant="ghost" className="text-sm">
-                Job Matcher
-              </Button>
-            </Link>
+          {user ? (
+            <UserMenu user={user} onLogout={() => {}} />
+          ) : showLogin && (
+            <Button variant="secondary" onClick={handleLogin} className="cursor-pointer text-sm" type="button">
+              Login with Google
+            </Button>
           )}
         </div>
       </div>

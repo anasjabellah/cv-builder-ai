@@ -16,10 +16,9 @@ import Textarea from '@/components/ui/Textarea';
 interface CVFormProps {
   data: CVFormData;
   onChange: (data: CVFormData) => void;
-  style: CVStyle;
-  onStyleChange: (style: CVStyle) => void;
   onGenerate: () => void;
   generating: boolean;
+  disabled?: boolean;
 }
 
 type SectionKey = 'personal' | 'summary' | 'experience' | 'education' | 'skills' | 'languages' | 'certifications';
@@ -29,6 +28,7 @@ export default function CVForm({
   onChange,
   onGenerate,
   generating,
+  disabled = false,
 }: CVFormProps) {
   const [openSections, setOpenSections] = useState<Record<SectionKey, boolean>>({
     personal: true,
@@ -206,6 +206,7 @@ export default function CVForm({
           variant="primary"
           onClick={handleGenerate}
           loading={generating}
+          disabled={disabled}
           className="flex-2 cursor-pointer"
           type="button"
         >
