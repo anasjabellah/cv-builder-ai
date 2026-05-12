@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import Button from '@/components/ui/Button';
-import Toast from '@/components/ui/Toast';
+import Button from '@/shared/ui/Button';
+import Toast from '@/shared/ui/Toast';
 
 interface LanguageOption {
   code: string;

@@ -5,7 +5,8 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import CVPreview from '@/components/preview/CVPreview';
 import ExportButtons from '@/components/export/ExportButtons';
-import Button from '@/components/ui/Button';
+import { emptyFormData } from '@/shared/types';
+import Button from '@/shared/ui/Button';
 import Navbar from '@/components/layout/Navbar';
 
 export default function GenerateResultPage() {
@@ -14,10 +15,12 @@ export default function GenerateResultPage() {
   const [style, setStyle] = useState<string>('modern');
 
   useEffect(() => {
-    const htmlParam = searchParams.get('html');
-    const styleParam = searchParams.get('style');
-    if (htmlParam) setHtml(decodeURIComponent(htmlParam));
-    if (styleParam) setStyle(styleParam);
+    if (searchParams) {
+      const htmlParam = searchParams.get('html');
+      const styleParam = searchParams.get('style');
+      if (htmlParam) setHtml(decodeURIComponent(htmlParam));
+      if (styleParam) setStyle(styleParam);
+    }
   }, [searchParams]);
 
   return (
@@ -28,7 +31,7 @@ export default function GenerateResultPage() {
           <>
             <CVPreview html={html} generating={false} />
             <div className="mt-6 flex gap-4">
-              <ExportButtons html={html} style={style as any} disabled={false} />
+              <ExportButtons html={html} formData={emptyFormData()} style={style as any} disabled={false} />
               <Button variant="secondary" onClick={() => (window.location.href = '/')}>Back to Builder</Button>
             </div>
           </>
