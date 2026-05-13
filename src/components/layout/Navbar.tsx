@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { auth, googleProvider } from '@/lib/firebase';
+import { auth, googleProvider } from '@/features/auth/services/firebase-auth';
 import { onAuthStateChanged, signInWithPopup } from 'firebase/auth';
 import Button from '@/components/ui/Button';
 import UserMenu from '@/components/ui/UserMenu';

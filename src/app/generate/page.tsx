@@ -2,14 +2,23 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 import { useEffect, useState } from 'react';
-import CVPreview from '@/components/preview/CVPreview';
+import CVPreview from '@/features/resume/components/CVPreview';
 import ExportButtons from '@/components/export/ExportButtons';
 import { emptyFormData } from '@/shared/types';
 import Button from '@/shared/ui/Button';
 import Navbar from '@/components/layout/Navbar';
 
-export default function GenerateResultPage() {
+export default function GeneratePage() {
+  return (
+    <Suspense fallback={null}>
+      <GeneratePageContent />
+    </Suspense>
+  );
+}
+
+function GeneratePageContent() {
   const searchParams = useSearchParams();
   const [html, setHtml] = useState<string>('');
   const [style, setStyle] = useState<string>('modern');

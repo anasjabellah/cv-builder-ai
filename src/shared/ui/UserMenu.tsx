@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import type { User } from 'firebase/auth';
 import { signOut } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { auth } from '@/features/auth/services/firebase-auth';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface UserMenuProps {

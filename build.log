@@ -1,0 +1,46 @@
+
+> cv-builder-ai@1.0.0 build
+> next build
+
+ ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of C:\Users\PC-DELL\OneDrive\package-lock.json as the root directory.
+ To silence this warning, set `outputFileTracingRoot` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/output#caveats for more information.
+ Detected additional lockfiles: 
+   * C:\Users\PC-DELL\OneDrive\Bureau\Claude Code\cv-builder-ai\package-lock.json
+   * C:\Users\PC-DELL\OneDrive\Bureau\Claude Code\package-lock.json
+
+   ▲ Next.js 15.5.15
+   - Environments: .env.local, .env
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 14.1s
+   Linting and checking validity of types ...
+ ⨯ ESLint: Cannot find package '@eslint/js' imported from C:\Users\PC-DELL\OneDrive\Bureau\Claude Code\cv-builder-ai\eslint.config.js
+(node:3236) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/PC-DELL/OneDrive/Bureau/Claude%20Code/cv-builder-ai/eslint.config.js?mtime=1778593339152 is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to C:\Users\PC-DELL\OneDrive\Bureau\Claude Code\cv-builder-ai\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+   Collecting page data ...
+   Generating static pages (0/9) ...
+   Generating static pages (2/9) 
+ ⨯ useSearchParams() should be wrapped in a suspense boundary at page "/generate". Read more: https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout
+    at g (C:\Users\PC-DELL\OneDrive\Bureau\Claude Code\cv-builder-ai\.next\server\chunks\659.js:1:81498)
+    at m (C:\Users\PC-DELL\OneDrive\Bureau\Claude Code\cv-builder-ai\.next\server\chunks\659.js:9:13534)
+    at k (C:\Users\PC-DELL\OneDrive\Bureau\Claude Code\cv-builder-ai\.next\server\app\generate\page.js:1:2014)
+    at n3 (C:\Users\PC-DELL\OneDrive\Bureau\Claude Code\cv-builder-ai\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:2:82831)
+    at n6 (C:\Users\PC-DELL\OneDrive\Bureau\Claude Code\cv-builder-ai\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:2:84601)
+    at n5 (C:\Users\PC-DELL\OneDrive\Bureau\Claude Code\cv-builder-ai\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:2:104801)
+    at n7 (C:\Users\PC-DELL\OneDrive\Bureau\Claude Code\cv-builder-ai\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:2:102219)
+    at n8 (C:\Users\PC-DELL\OneDrive\Bureau\Claude Code\cv-builder-ai\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:2:83183)
+    at n6 (C:\Users\PC-DELL\OneDrive\Bureau\Claude Code\cv-builder-ai\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:2:84647)
+    at n6 (C:\Users\PC-DELL\OneDrive\Bureau\Claude Code\cv-builder-ai\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:2:101560)
+    at n5 (C:\Users\PC-DELL\OneDrive\Bureau\Claude Code\cv-builder-ai\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:2:104801)
+    at n7 (C:\Users\PC-DELL\OneDrive\Bureau\Claude Code\cv-builder-ai\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:2:102219)
+    at ia (C:\Users\PC-DELL\OneDrive\Bureau\Claude Code\cv-builder-ai\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:2:108211)
+    at ie (C:\Users\PC-DELL\OneDrive\Bureau\Claude Code\cv-builder-ai\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:2:106833)
+    at n5 (C:\Users\PC-DELL\OneDrive\Bureau\Claude Code\cv-builder-ai\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:2:105079)
+    at n7 (C:\Users\PC-DELL\OneDrive\Bureau\Claude Code\cv-builder-ai\node_modules\next\dist\compiled\next-server\app-page.runtime.prod.js:2:102219)
+Error occurred prerendering page "/generate". Read more: https://nextjs.org/docs/messages/prerender-error
+Export encountered an error on /generate/page: /generate, exiting the build.
+ ⨯ Next.js build worker exited with code: 1 and signal: null

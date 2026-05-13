@@ -8,7 +8,7 @@ Provides:
 'use client';
 
 import { useState, useEffect, ReactNode } from 'react';
-import { auth, getCurrentUser } from '@/lib/firebase';
+import { auth, getCurrentUser } from '@/features/auth/services/firebase-auth';
 import { onAuthStateChanged, User } from 'firebase/auth';
 
 /** Hook to subscribe to Firebase auth state */

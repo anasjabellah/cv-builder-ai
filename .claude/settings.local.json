@@ -31,7 +31,10 @@
       "Bash(findstr /i \"error\")",
       "Bash(findstr /i \"word export docx\")",
       "Bash(findstr /i \"error word export docx\")",
-      "Bash(findstr /i \"error\" /i \"word\" /i \"export\" /i \"docx\")"
+      "Bash(findstr /i \"error\" /i \"word\" /i \"export\" /i \"docx\")",
+      "Bash(git mv *)",
+      "Bash(git rm *)",
+      "PowerShell(Move-Item *)"
     ]
   }
 }

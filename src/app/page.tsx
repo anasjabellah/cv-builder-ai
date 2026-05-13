@@ -3,15 +3,15 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import type { CVFormData, CVStyle } from '@/types';
 import { emptyFormData } from '@/types';
-import CVUpload from '@/components/upload/CVUpload';
-import CVForm from '@/components/form/CVForm';
-import CVPreview from '@/components/preview/CVPreview';
-import StylePicker from '@/components/preview/StylePicker';
+import CVUpload from '@/features/resume/components/CVUpload';
+import CVForm from '@/features/resume/components/CVForm';
+import CVPreview from '@/features/resume/components/CVPreview';
+import StylePicker from '@/features/resume/components/StylePicker';
 import ExportButtons from '@/components/export/ExportButtons';
 import ATSResult from '@/components/ui/ATSResult';
 import Button from '@/components/ui/Button';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
-import { auth, firestore } from '@/lib/firebase';
+import { auth, firestore } from '@/features/auth/services/firebase-auth';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import Navbar from '@/components/layout/Navbar';
@@ -318,7 +318,7 @@ export default function HomePage() {
             <Button
               variant="secondary"
               onClick={async () => {
-                const { signInWithPopup, googleProvider, auth } = await import('@/lib/firebase');
+                const { signInWithPopup, googleProvider, auth } = await import('@/features/auth/services/firebase-auth');
                 try { await signInWithPopup(auth, googleProvider); } catch (e: any) {
                   if (e?.code !== 'auth/popup-closed-by-user') console.error(e?.message);
                 }

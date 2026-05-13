@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { extractCV } from '@/lib/extract-cv';
+import { extractCV } from '@/features/resume/services/extract-cv';
 
 export async function POST(request: NextRequest) {
   try {
