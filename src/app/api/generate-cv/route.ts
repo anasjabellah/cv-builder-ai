@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateCV } from '@/lib/generate-cv';
+import { generateCV } from '@/features/ai/services/generate-cv';
 import type { CVFormData, CVStyle } from '@/types';
 
 export async function POST(request: NextRequest) {

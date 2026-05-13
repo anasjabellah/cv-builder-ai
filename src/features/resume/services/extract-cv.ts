@@ -1,6 +1,6 @@
 import pdf from 'pdf-parse';
 import mammoth from 'mammoth';
-import { callOpenRouter } from '@/lib/groq';
+import { callOpenRouter } from '@/features/ai/providers/groq';
 import type { CVFormData } from '@/types';
 import { emptyFormData } from '@/types';
 
