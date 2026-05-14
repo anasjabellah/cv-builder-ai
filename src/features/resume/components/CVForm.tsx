@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import type { CVFormData, CVStyle } from '@/types';
 import { emptyFormData } from '@/types';
-import { validateFormData, ValidationErrors } from '@/shared/utils/validation';
+import { validateResume } from '@/features/resume/schemas/resume.schema';
+import type { ValidationErrors } from '@/shared/utils/validation';
 import PersonalInfo from './PersonalInfo';
 import WorkExperience from './WorkExperience';
 import Education from './Education';
@@ -108,8 +109,26 @@ export default function CVForm({
   };
 
   const handleGenerate = () => {
-    const validationErrors = validateFormData(data);
-    setErrors(validationErrors);
+    const result = validateResume(data);
+    if (!result.valid) {
+      // Convert flat error map to ValidationErrors shape (best‑effort)
+      const mapped: any = {};
+      Object.entries(result.errors).forEach(([path, msg]) => {
+        const parts = path.split('.');
+        // e.g., personalInfo.fullName -> errors.personalInfo.fullName
+        if (parts.length === 2) {
+          const [section, field] = parts;
+          if (!mapped[section]) mapped[section] = {};
+          mapped[section][field] = msg;
+        } else {
+          // fallback to top‑level error
+          mapped.form = msg;
+        }
+      });
+      setErrors(mapped as any);
+      return; // stop generation
+    }
+    setErrors({} as any);
     onGenerate();
   };
 
