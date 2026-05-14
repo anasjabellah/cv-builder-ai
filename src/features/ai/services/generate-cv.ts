@@ -1,5 +1,5 @@
 import type { CVFormData, CVStyle } from '@/types';
-import { modernTemplate, classicTemplate, creativeTemplate } from '@/features/ai/services/cv-templates';
+import { modernTemplate, classicTemplate, creativeTemplate, developerTemplate } from '@/features/ai/services/cv-templates';
 
 // Sort experience by startDate descending (most recent first)
 function sortExperienceByDate(experience: CVFormData['experience']): CVFormData['experience'] {
@@ -40,7 +40,9 @@ export async function generateCV(
       return modernTemplate(sortedData);
     case 'classic':
       return classicTemplate(sortedData);
-    case 'creative':
+    case 'developer':
+        return developerTemplate(sortedData);
+      case 'creative':
       return creativeTemplate(sortedData);
     default:
       return modernTemplate(sortedData);

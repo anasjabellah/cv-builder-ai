@@ -60,7 +60,7 @@ export interface CVFormData {
   certifications: CertificationEntry[];
 }
 
-export type CVStyle = 'modern' | 'classic' | 'creative';
+export type CVStyle = 'modern' | 'classic' | 'creative' | 'developer';
 
 export interface GenerateCVRequest {
   formData: CVFormData;

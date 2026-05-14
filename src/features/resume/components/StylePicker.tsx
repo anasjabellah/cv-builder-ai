@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { emptyFormData } from '@/types';
 import type { CVStyle, CVFormData } from '@/types';
-import { modernTemplate, classicTemplate, creativeTemplate } from '@/features/ai/services/cv-templates';
+import { modernTemplate, classicTemplate, creativeTemplate, developerTemplate } from '@/features/ai/services/cv-templates';
 
 interface StylePickerProps {
   selected: CVStyle;
@@ -30,6 +30,11 @@ const STYLES: {
     id: 'creative',
     name: 'Creative',
     description: 'Bold purple gradient. Fun, modern, eye-catching.',
+  },
+  {
+    id: 'developer',
+    name: 'Developer',
+    description: 'Dark terminal theme with monospace font and green accents.',
   },
 ];
 
@@ -107,6 +112,7 @@ export default function StylePicker({ selected, onSelect }: StylePickerProps) {
       modern: modernTemplate(sampleData),
       classic: classicTemplate(sampleData),
       creative: creativeTemplate(sampleData),
+      developer: developerTemplate(sampleData),
     }),
     [sampleData]
   );

@@ -39,7 +39,9 @@
       "Bash(mv src/lib/export-pdf.ts src/features/export/services/export-pdf.ts)",
       "Bash(mv src/lib/export-word.ts src/features/export/services/export-word.ts)",
       "Bash(mv src/lib/html-to-docx.d.ts src/features/export/types/html-to-docx.d.ts)",
-      "Bash(mv src/lib/translate-cv.ts src/features/resume/services/translate-cv.ts)"
+      "Bash(mv src/lib/translate-cv.ts src/features/resume/services/translate-cv.ts)",
+      "Bash(npx ts-prune *)",
+      "Bash(curl *)"
     ]
   }
 }

@@ -204,6 +204,88 @@ export function classicTemplate(data: CVFormData): string {
 </html>`;
 }
 
+export function developerTemplate(data: CVFormData): string {
+  const { personalInfo, summary, experience, education, skills, languages, certifications } = data;
+
+  // Simple dark theme with monospace font and green accent
+  const expHtml = experience.filter(e => e.company).map(e => `
+    <div style="margin-bottom:12px; padding:8px; background:#161B22; border-left:4px solid #00ff41; border-radius:0 4px 4px 0;">
+      <div style="display:flex; justify-content:space-between; align-items:baseline; color:#e6e6e6;">
+        <div>
+          <div style="font-weight:600; font-size:14px; color:#00ff41;">${e.position}</div>
+          <div style="color:#c9d1d9; font-size:13px;">${e.company}</div>
+        </div>
+        <div style="font-size:12px; color:#8b949e;">${formatDate(e.startDate)} - ${e.current ? 'Present' : formatDate(e.endDate)}</div>
+      </div>
+      ${e.description ? `<div style="color:#c9d1d9; font-size:12px; margin-top:4px; line-height:1.4;">${e.description}</div>` : ''}
+    </div>
+  `).join('');
+
+  const eduHtml = education.filter(e => e.institution).map(e => `
+    <div style="margin-bottom:12px; padding:8px; background:#161B22; border-left:4px solid #00ff41; border-radius:0 4px 4px 0;">
+      <div style="color:#c9d1d9; font-size:14px; font-weight:600;">${e.institution}</div>
+      <div style="color:#c9d1d9; font-size:13px;">${e.degree}${e.field ? ` in ${e.field}` : ''}</div>
+      <div style="color:#8b949e; font-size:12px;">${formatDate(e.startDate)} - ${formatDate(e.endDate)}${e.grade ? ` | Grade: ${e.grade}` : ''}</div>
+    </div>
+  `).join('');
+
+  const skillsHtml = skills.filter(s => s.category).map(s => `
+    <div style="margin-bottom:8px;">
+      <div style="font-size:12px; font-weight:600; color:#00ff41; text-transform:uppercase; margin-bottom:4px;">${s.category}</div>
+      <div style="display:flex; flex-wrap:wrap; gap:4px;">
+        ${s.items.map(item => `<code style="background:#0d1117; color:#00ff41; padding:2px 6px; border-radius:3px; font-size:11px;">${item}</code>`).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  const langHtml = languages.filter(l => l.name).map(l => `
+    <span style="background:#0d1117; color:#79c0ff; padding:2px 6px; border-radius:3px; font-size:11px; margin-right:4px;">${l.name} (${l.level})</span>
+  `).join('');
+
+  const certHtml = certifications.filter(c => c.name).map(c => `
+    <div style="margin-bottom:8px; color:#c9d1d9; font-size:12px;">
+      <strong style="color:#00ff41;">${c.name}</strong> - ${c.issuer}${c.date ? ` (${c.date})` : ''}
+    </div>
+  `).join('');
+
+  return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family: 'Fira Code', monospace; background:#0d1117; color:#c9d1d9; font-size:13px; line-height:1.5; }
+    @page { size:A4; margin:0; }
+    .page { width:210mm; height:297mm; display:flex; flex-direction:column; padding:20px; }
+    .header { text-align:center; margin-bottom:20px; }
+    .name { font-size:24px; font-weight:bold; color:#00ff41; }
+    .title { font-size:14px; color:#c9d1d9; margin-top:4px; }
+    .contact { font-size:12px; margin-top:8px; }
+    .section { margin-top:16px; }
+    .section-header { font-size:16px; font-weight:600; color:#00ff41; margin-bottom:8px; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="header">
+      <div class="name">${personalInfo.fullName}</div>
+      <div class="title">${experience[0]?.position || 'Software Engineer'}</div>
+      <div class="contact">
+        ${personalInfo.email ? `✉ ${personalInfo.email}` : ''} ${personalInfo.phone ? `• ${personalInfo.phone}` : ''} ${personalInfo.linkedin ? `• ${personalInfo.linkedin}` : ''}
+      </div>
+    </div>
+    ${summary ? `<div class="section"><div class="section-header">Summary</div><div>${summary}</div></div>` : ''}
+    ${expHtml ? `<div class="section"><div class="section-header">Experience</div>${expHtml}</div>` : ''}
+    ${eduHtml ? `<div class="section"><div class="section-header">Education</div>${eduHtml}</div>` : ''}
+    ${skillsHtml ? `<div class="section"><div class="section-header">Skills</div>${skillsHtml}</div>` : ''}
+    ${langHtml ? `<div class="section"><div class="section-header">Languages</div>${langHtml}</div>` : ''}
+    ${certHtml ? `<div class="section"><div class="section-header">Certifications</div>${certHtml}</div>` : ''}
+  </div>
+</body>
+</html>`;
+}
+
 export function creativeTemplate(data: CVFormData): string {
   const { personalInfo, summary, experience, education, skills, languages, certifications } = data;
 
