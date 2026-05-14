@@ -2,8 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import type { User } from 'firebase/auth';
-import { signOut } from 'firebase/auth';
-import { auth } from '@/features/auth/services/firebase-auth';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface UserMenuProps {
@@ -12,6 +11,7 @@ interface UserMenuProps {
 }
 
 export default function UserMenu({ user, onLogout }: UserMenuProps) {
+  const { signOut: signOutHook } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -80,7 +80,7 @@ export default function UserMenu({ user, onLogout }: UserMenuProps) {
 
   const confirmLogout = async () => {
     try {
-      await signOut(auth);
+      await signOutHook();
       setShowConfirm(false);
       setIsOpen(false);
       onLogout?.();

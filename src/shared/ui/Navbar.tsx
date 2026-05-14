@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { auth, googleProvider } from '@/features/auth/services/firebase-auth';
-import { onAuthStateChanged, signInWithPopup } from 'firebase/auth';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 import Button from '@/shared/ui/Button';
 import UserMenu from '@/shared/ui/UserMenu';
 
@@ -25,21 +24,10 @@ export default function Navbar({
   onStepChange,
   onGeneratedHtmlChange,
 }: NavbarProps) {
-  const [user, setUser] = useState<any>(null);
-
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => setUser(u));
-    return () => unsub();
-  }, []);
+  const { user, loading, signIn, signOut } = useAuth();
 
   const handleLogin = async () => {
-    try {
-      await signInWithPopup(auth, googleProvider);
-    } catch (e: any) {
-      if (e?.code !== 'auth/popup-closed-by-user') {
-        console.error(e?.message || 'Authentication failed');
-      }
-    }
+    await signIn();
   };
 
   return (
