@@ -1,7 +1,7 @@
 'use client';
 
 import type { PersonalInfo } from '@/types';
-import Input from '@/components/ui/Input';
+import Input from '@/shared/ui/Input';
 
 interface PersonalInfoProps {
   data: PersonalInfo;

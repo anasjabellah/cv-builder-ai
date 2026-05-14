@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import type { CVFormData } from '@/types';
-import Button from '@/components/ui/Button';
-import Toast from '@/components/ui/Toast';
+import Button from '@/shared/ui/Button';
+import Toast from '@/shared/ui/Toast';
 
 interface ExportButtonsProps {
   html: string | null;

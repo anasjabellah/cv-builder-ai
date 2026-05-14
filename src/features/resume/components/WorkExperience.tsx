@@ -2,9 +2,9 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import type { ExperienceEntry } from '@/types';
-import Input from '@/components/ui/Input';
-import Textarea from '@/components/ui/Textarea';
-import Button from '@/components/ui/Button';
+import Input from '@/shared/ui/Input';
+import Textarea from '@/shared/ui/Textarea';
+import Button from '@/shared/ui/Button';
 
 interface WorkExperienceProps {
   errors?: { startDate?: string; endDate?: string }[];

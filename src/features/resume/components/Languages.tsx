@@ -2,8 +2,8 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import type { LanguageEntry, LanguageLevel } from '@/types';
-import Input from '@/components/ui/Input';
-import Button from '@/components/ui/Button';
+import Input from '@/shared/ui/Input';
+import Button from '@/shared/ui/Button';
 
 const LEVELS: LanguageLevel[] = ['Beginner', 'Intermediate', 'Advanced', 'Native'];
 

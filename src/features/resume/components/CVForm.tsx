@@ -10,8 +10,8 @@ import Education from './Education';
 import Skills from './Skills';
 import Languages from './Languages';
 import Certifications from './Certifications';
-import Button from '@/components/ui/Button';
-import Textarea from '@/components/ui/Textarea';
+import Button from '@/shared/ui/Button';
+import Textarea from '@/shared/ui/Textarea';
 
 interface CVFormProps {
   data: CVFormData;
