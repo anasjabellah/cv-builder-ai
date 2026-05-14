@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import LoadingSpinner from '@/shared/ui/LoadingSpinner';
 
 interface CVPreviewProps {
   html: string | null;

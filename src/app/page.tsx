@@ -8,13 +8,13 @@ import CVForm from '@/features/resume/components/CVForm';
 import CVPreview from '@/features/resume/components/CVPreview';
 import StylePicker from '@/features/resume/components/StylePicker';
 import ExportButtons from '@/components/export/ExportButtons';
-import ATSResult from '@/components/ui/ATSResult';
-import Button from '@/components/ui/Button';
-import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import ATSResult from '@/shared/ui/ATSResult';
+import Button from '@/shared/ui/Button';
+import LoadingSpinner from '@/shared/ui/LoadingSpinner';
 import { auth, firestore } from '@/features/auth/services/firebase-auth';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import Navbar from '@/components/layout/Navbar';
+import Navbar from '@/shared/ui/Navbar';
 
 type Step = 'upload' | 'form';
 

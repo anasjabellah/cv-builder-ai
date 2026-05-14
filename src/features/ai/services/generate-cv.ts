@@ -1,5 +1,5 @@
 import type { CVFormData, CVStyle } from '@/types';
-import { modernTemplate, classicTemplate, creativeTemplate } from '@/lib/cv-templates';
+import { modernTemplate, classicTemplate, creativeTemplate } from '@/features/ai/services/cv-templates';
 
 // Sort experience by startDate descending (most recent first)
 function sortExperienceByDate(experience: CVFormData['experience']): CVFormData['experience'] {

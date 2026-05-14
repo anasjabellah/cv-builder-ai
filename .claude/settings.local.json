@@ -34,7 +34,12 @@
       "Bash(findstr /i \"error\" /i \"word\" /i \"export\" /i \"docx\")",
       "Bash(git mv *)",
       "Bash(git rm *)",
-      "PowerShell(Move-Item *)"
+      "PowerShell(Move-Item *)",
+      "Bash(mv src/lib/cv-templates.ts src/features/ai/services/cv-templates.ts)",
+      "Bash(mv src/lib/export-pdf.ts src/features/export/services/export-pdf.ts)",
+      "Bash(mv src/lib/export-word.ts src/features/export/services/export-word.ts)",
+      "Bash(mv src/lib/html-to-docx.d.ts src/features/export/types/html-to-docx.d.ts)",
+      "Bash(mv src/lib/translate-cv.ts src/features/resume/services/translate-cv.ts)"
     ]
   }
 }

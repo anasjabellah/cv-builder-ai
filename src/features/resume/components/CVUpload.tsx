@@ -2,7 +2,7 @@
 
 import { useCallback, useState, useRef } from 'react';
 import type { CVFormData } from '@/types';
-import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import LoadingSpinner from '@/shared/ui/LoadingSpinner';
 
 interface CVUploadProps {
   onParsed: (data: CVFormData) => void;

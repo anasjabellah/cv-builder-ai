@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generatePDFFromHTML } from '@/lib/export-pdf';
-import { generateWordFromHTML } from '@/lib/export-word';
+import { generatePDFFromHTML } from '@/features/export/services/export-pdf';
+import { generateWordFromHTML } from '@/features/export/services/export-word';
 
 export async function POST(request: NextRequest) {
   // Set a 30‑second timeout to avoid hanging requests

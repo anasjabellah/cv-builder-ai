@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import type { CVFormData, CVStyle } from '@/types';
 import { emptyFormData } from '@/types';
-import { validateFormData, ValidationErrors } from '@/lib/validation';
+import { validateFormData, ValidationErrors } from '@/shared/utils/validation';
 import PersonalInfo from './PersonalInfo';
 import WorkExperience from './WorkExperience';
 import Education from './Education';

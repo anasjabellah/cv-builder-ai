@@ -3,13 +3,13 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import type { CVFormData } from '@/types';
-import Button from '@/components/ui/Button';
-import Textarea from '@/components/ui/Textarea';
-import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import Button from '@/shared/ui/Button';
+import Textarea from '@/shared/ui/Textarea';
+import LoadingSpinner from '@/shared/ui/LoadingSpinner';
 import { auth, firestore } from '@/features/auth/services/firebase-auth';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
-import Navbar from '@/components/layout/Navbar';
+import Navbar from '@/shared/ui/Navbar';
 export default function JobMatcher() {
   const [user, setUser] = useState<any>(null);
   const [cvData, setCvData] = useState<CVFormData | null>(null);

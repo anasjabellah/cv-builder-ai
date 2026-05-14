@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { emptyFormData } from '@/types';
 import type { CVStyle, CVFormData } from '@/types';
-import { modernTemplate, classicTemplate, creativeTemplate } from '@/lib/cv-templates';
+import { modernTemplate, classicTemplate, creativeTemplate } from '@/features/ai/services/cv-templates';
 
 interface StylePickerProps {
   selected: CVStyle;

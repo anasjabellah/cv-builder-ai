@@ -8,7 +8,7 @@ import CVPreview from '@/features/resume/components/CVPreview';
 import ExportButtons from '@/components/export/ExportButtons';
 import { emptyFormData } from '@/shared/types';
 import Button from '@/shared/ui/Button';
-import Navbar from '@/components/layout/Navbar';
+import Navbar from '@/shared/ui/Navbar';
 
 export default function GeneratePage() {
   return (

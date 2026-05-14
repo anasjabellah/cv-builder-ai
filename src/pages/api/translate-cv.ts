@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { translateCV } from '@/lib/translate-cv';
+import { translateCV } from '@/features/resume/services/translate-cv';
 import type { CVFormData } from '@/types';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
